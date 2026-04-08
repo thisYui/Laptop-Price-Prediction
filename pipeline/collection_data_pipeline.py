@@ -1,5 +1,6 @@
 import time
 import os
+import json
 import pandas as pd
 from src.data.collect import (
     scrape_websosanh_api,
@@ -22,26 +23,45 @@ class DataCollectionPipeline:
         self.data_output = data_output if data_output is not None else pipeline_config.get('data_output', "laptop_features.csv")
         self.delay = pipeline_config.get('delay_between_requests', 2)
         self.chunk_size = pipeline_config.get('chunk_size', 20)
+        self.brands_to_crawl = pipeline_config.get('brands', 'all')
         
         self.base_url = api_config.get('base_url', "https://websosanh.vn")
+
+        # Load brand mapping
+        self.brand_mapping = {}
+        mapping_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'data', 'brand_mapping.json')
+        if os.path.exists(mapping_path):
+            with open(mapping_path, 'r', encoding='utf-8') as f:
+                self.brand_mapping = json.load(f)
 
     def run_url_extraction(self):
         unique_urls = set()
         print(f"Starting to extract URLs from page {self.start_page} to {self.end_page}...")
         
-        for page in range(self.start_page, self.end_page + 1):
-            print(f"Processing page {page} for links...")
-            result_data = scrape_websosanh_api(page_index=page, config=self.config)
-            
-            if result_data:
-                relative_urls = find_detail_urls(result_data)
+        if not self.brand_mapping:
+            print("Warning: brand_mapping.json not found or empty.")
+            target_brands = {'all': None}
+        else:
+            if self.brands_to_crawl == 'all':
+                target_brands = self.brand_mapping
+            else:
+                target_brands = {b: self.brand_mapping[b] for b in self.brands_to_crawl if b in self.brand_mapping}
                 
-                for rel_url in relative_urls:
-                    absolute_url = self.base_url + rel_url
-                    unique_urls.add(absolute_url)
+        for brand, cat_id in target_brands.items():
+            print(f"\n--- Crawling brand: {brand} (Category ID: {cat_id}) ---")
+            for page in range(self.start_page, self.end_page + 1):
+                print(f"Processing {brand} page {page} for links...")
+                result_data = scrape_websosanh_api(page_index=page, config=self.config, brand=brand, category_id=cat_id)
+                
+                if result_data:
+                    relative_urls = find_detail_urls(result_data)
                     
-            # Pause to avoid rate limits
-            time.sleep(self.delay)
+                    for rel_url in relative_urls:
+                        absolute_url = self.base_url + rel_url
+                        unique_urls.add(absolute_url)
+                        
+                # Pause to avoid rate limits
+                time.sleep(self.delay)
             
         print(f"Extraction finished. Found {len(unique_urls)} unique URLs.")
         

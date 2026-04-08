@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-def scrape_websosanh_api(page_index, config=None):
+def scrape_websosanh_api(page_index, config=None, brand=None, category_id=None):
     if config is None:
         config = {}
         
@@ -13,12 +13,19 @@ def scrape_websosanh_api(page_index, config=None):
     timeout = api_config.get('timeout_seconds', 10)
     base_url = api_config.get('base_url', "https://websosanh.vn")
     
+    cat_id = category_id if category_id else payload_config.get('category_id', 18)
+    
+    if brand and brand != 'all':
+        referer = f"{base_url}/laptop-{brand}/cat-{cat_id}?pi={page_index}.htm"
+    else:
+        referer = f"{base_url}/laptop/cat-{cat_id}?pi={page_index}.htm"
+    
     headers = {
         "accept": headers_config.get('accept_json', "application/json, text/plain, */*"),
         "accept-language": headers_config.get('accept_language', "vi,en-US;q=0.9,en;q=0.8"),
         "content-type": "application/json",
         "origin": base_url,
-        "referer": f"{base_url}/laptop/cat-18?pi={page_index}.htm",
+        "referer": referer,
         "user-agent": headers_config.get('user_agent', "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
     }
     
@@ -29,7 +36,7 @@ def scrape_websosanh_api(page_index, config=None):
         "startOffset": start_offset,
         "numRow": num_row,
         "defaultRow": num_row,
-        "categoryIds": [payload_config.get('category_id', 18)],
+        "categoryIds": [cat_id],
         "merchantIds": [],
         "regionIds": [],
         "isGetResult": True,
@@ -58,7 +65,9 @@ def find_detail_urls(json_data):
     if isinstance(json_data, dict):
         for key, value in json_data.items():
             if key == "detailUrl" and isinstance(value, str):
-                extracted_urls.append(value)
+                # Filter out merchant direct links as they don't contain specification tables
+                if "direct.htm" not in value:
+                    extracted_urls.append(value)
             else:
                 extracted_urls.extend(find_detail_urls(value))
     elif isinstance(json_data, list):
