@@ -2,14 +2,45 @@ import pandas as pd
 import os
 import sys
 
-# Add the project root to the sys.path to allow importing from scripts
+# Add the project root to the sys.path to allow importing from src
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-# Import the orchestrator function from our scripts folder
-from scripts.data_cleaning import process_all_features
+# Import the data cleaning functions from src.data
+from src.data.data_cleaning import (
+    clean_newlines,
+    clean_manufacturer,
+    clean_ram,
+    clean_storage,
+    clean_resolution,
+    clean_screen_size,
+    clean_weight,
+    clean_cpu_speed,
+    clean_dimensions,
+    clean_gpu,
+    format_prices,
+    fill_missing,
+    drop_unnecessary_columns
+)
+
+def process_all_features(df):
+    """Orchestrates all cleaning steps on a pandas DataFrame."""
+    df = clean_newlines(df)
+    df = clean_manufacturer(df)
+    df = clean_ram(df)
+    df = clean_storage(df)
+    df = clean_resolution(df)
+    df = clean_screen_size(df)
+    df = clean_weight(df)
+    df = clean_cpu_speed(df)
+    df = clean_dimensions(df)
+    df = clean_gpu(df)
+    df = format_prices(df)
+    df = fill_missing(df)
+    df = drop_unnecessary_columns(df)
+    return df
 
 def run_cleaning_pipeline(input_path, output_path):
     print(f"Reading data from {input_path}...")
@@ -21,7 +52,7 @@ def run_cleaning_pipeline(input_path, output_path):
         
     print("Initial shape:", df.shape)
     
-    # Process the data using the script functions
+    # Process the data using the orchestrating function
     df = process_all_features(df)
     
     # Validation step
@@ -33,9 +64,3 @@ def run_cleaning_pipeline(input_path, output_path):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     df.to_csv(output_path, index=False, encoding='utf-8')
     print(f"Saved cleaned data to {output_path}")
-
-if __name__ == "__main__":
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    input_file = os.path.join(current_dir, "..", "data", "raw", "laptop_features.csv")
-    output_file = os.path.join(current_dir, "..", "data", "raw", "clean_laptop_features.csv")
-    run_cleaning_pipeline(input_file, output_file)
