@@ -34,7 +34,7 @@ def get_product_links(page, config=None):
         return []
 
 def get_product_details(url, config=None):
-    """Truy cập vào link sản phẩm cụ thể để lấy thông tin chi tiết và đồng nhất đặc trưng."""
+    """Truy cập vào link sản phẩm cụ thể để lấy thông tin chi tiết."""
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     }
@@ -44,41 +44,20 @@ def get_product_details(url, config=None):
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Tập hợp các đặc trưng đích theo schema laptop_features.csv
-        target_features = [
-            'Hãng sản xuất', 'Hệ điều hành', 'Chất liệu vỏ', 'Công nghệ CPU', 'Loại CPU', 
-            'Tốc độ CPU', 'Tốc độ tối đa', 'Loại RAM', 'Dung lượng RAM', 'Tốc độ bus', 
-            'Hỗ trợ RAM tối đa', 'Loại ổ cứng', 'Dung lượng ổ cứng', 'Kích thước', 
-            'Độ phân giải', 'Công nghệ màn hình', 'Bộ xử lý', 'Kiểu card đồ họa', 
-            'Công nghệ âm thanh', 'Cổng giao tiếp', 'Kết nối không dây', 'Webcam', 
-            'Đèn bàn phím', 'Loại Pin', 'Dung lượng', 'Kích thước_2', 'Trọng lượng', 
-            'source_url', 'shop_1_name', 'shop_1_price', 'shop_1_link', 'shop_2_name', 
-            'shop_2_price', 'shop_2_link', 'shop_3_name', 'shop_3_price', 'shop_3_link', 
-            'Khe thẻ nhớ', 'Tính năng khác', 'Dung lượng VGA'
-        ]
+        details = {'url': url}
         
-        # Khởi tạo row với các giá trị rỗng
-        row = {feat: "" for feat in target_features}
-        row['shop_1_name'] = "Chợ Tốt"
-        
-        # 1. Trích xuất giá và làm sạch
+        # 1. Lấy giá từ thẻ <b class="p1mdjmwc">
         price_tag = soup.find('b', class_='p1mdjmwc')
         if price_tag:
-            price_str = price_tag.get_text(strip=True).replace('.', '').replace(' đ', '').replace(',', '')
-            row['shop_1_price'] = price_str
+            details['price'] = price_tag.get_text(strip=True)
             
-        # 2. Ánh xạ đặc trưng từ Chợ Tốt sang Schema chung
-        mapping = {
-            'Hãng': 'Hãng sản xuất',
-            'Bộ vi xử lý': 'Công nghệ CPU',
-            'RAM': 'Dung lượng RAM',
-            'Ổ cứng': 'Dung lượng ổ cứng',
-            'Kích cỡ màn hình': 'Kích thước',
-            'Card màn hình': 'Bộ xử lý',
-            'Loại ổ cứng': 'Loại ổ cứng'
-        }
-        
-        others = []
+        # 2. Lấy tiêu đề (thường là h1)
+        title_tag = soup.find('h1')
+        if title_tag:
+            details['title'] = title_tag.get_text(strip=True)
+
+        # 3. Lấy thông tin chi tiết từ container <div class="c189eou8">
+        # Các cặp nhãn-giá trị nằm trong <div class="p74axq8">
         spec_items = soup.find_all('div', class_='p74axq8')
         for item in spec_items:
             label_tag = item.find('div', class_='psxqsiz')
@@ -87,20 +66,24 @@ def get_product_details(url, config=None):
             if label_tag and value_tag:
                 label = label_tag.get_text(strip=True).replace(':', '')
                 value = value_tag.get_text(strip=True)
+                details[label] = value
                 
-                if label in mapping:
-                    row[mapping[label]] = value
-                else:
-                    others.append(f"{label}: {value}")
-        
-        # 3. Gộp các thông tin thừa vào 'Tính năng khác'
-        title_tag = soup.find('h1')
-        if title_tag:
-            others.append(f"Tiêu đề: {title_tag.get_text(strip=True)}")
-            
-        row['Tính năng khác'] = " | ".join(others)
+        # Nếu không lấy được bằng class (do web đổi giao diện), thử fallback qua JSON __NEXT_DATA__
+        if len(details) <= 2: # Chỉ có url và title/price
+            script_tag = soup.find('script', id='__NEXT_DATA__')
+            if script_tag:
+                try:
+                    data = json.loads(script_tag.string)
+                    ad_data = data.get('props', {}).get('pageProps', {}).get('adData', {})
+                    if ad_data:
+                        details['price'] = details.get('price') or ad_data.get('price')
+                        params = ad_data.get('parameters', [])
+                        for p in params:
+                            details[p.get('label')] = p.get('value')
+                except:
+                    pass
                     
-        return row
+        return details
     except Exception as e:
         print(f"Lỗi khi lấy chi tiết từ {url}: {e}")
         return None

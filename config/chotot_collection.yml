@@ -7,5 +7,6 @@ api:
     limit: 20
 pipeline:
   data_output: data/raw/chotot_laptop_data.csv
-  delay_between_requests: 1.5
-  total_pages: 2
+  delay_between_requests: 0.1
+  total_pages: 300
+  'delay_between_details': 0.1
