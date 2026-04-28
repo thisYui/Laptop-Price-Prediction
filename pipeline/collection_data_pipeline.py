@@ -29,7 +29,7 @@ class DataCollectionPipeline:
 
         # Load brand mapping
         self.brand_mapping = {}
-        mapping_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'data', 'brand_mapping.json')
+        mapping_path = os.path.join(os.path.dirname(__file__), '..', 'artifacts', 'encoders', 'brand_mapping.json')
         if os.path.exists(mapping_path):
             with open(mapping_path, 'r', encoding='utf-8') as f:
                 self.brand_mapping = json.load(f)
