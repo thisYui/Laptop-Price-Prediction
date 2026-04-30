@@ -1,5 +1,8 @@
-requests
-beautifulsoup4
-pandas
-PyYAML
-GEMINI.md
+requests==2.31.0
+beautifulsoup4==4.14.3
+pandas==2.2.2
+PyYAML==6.0.3
+missingno==0.5.2
+matplotlib==3.8.4
+seaborn==0.13.2
+scikit-learn==1.4.2
