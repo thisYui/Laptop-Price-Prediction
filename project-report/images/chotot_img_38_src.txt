@@ -1,0 +1,37 @@
+Cell Index: 222
+--- Source ---
+# ── Median price by GPU tier and RAM ───────────────────────────────────────────
+
+gpu_ram_price = df.dropna(subset=['gpu_tier', '_ram_gb', '_price']).copy()
+gpu_ram_price = gpu_ram_price[
+    gpu_ram_price['_ram_gb'].isin([4, 8, 16, 32])
+    & gpu_ram_price['_price'].between(1_000_000, 100_000_000)
+]
+
+gpu_ram_price['price_m'] = gpu_ram_price['_price'] / 1e6
+
+gpu_ram_price_pivot = (
+    gpu_ram_price
+    .groupby(['gpu_tier', '_ram_gb'])['price_m']
+    .median()
+    .unstack()
+)
+
+display(gpu_ram_price_pivot.round(2))
+
+fig, ax = plt.subplots(figsize=(8, 4))
+
+sns.heatmap(
+    gpu_ram_price_pivot,
+    annot=True,
+    fmt=".1f",
+    cmap="Blues",
+    ax=ax
+)
+
+ax.set_title("Median price theo GPU Tier và RAM")
+ax.set_xlabel("RAM (GB)")
+ax.set_ylabel("GPU Tier")
+
+plt.tight_layout()
+plt.show()

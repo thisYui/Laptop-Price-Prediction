@@ -1,0 +1,13 @@
+Cell Index: 91
+--- Source ---
+print(f"Distinct dòng máy: {df['Dòng máy'].nunique()}")
+print(f"Missing:           {df['Dòng máy'].isna().sum()}")
+
+top30 = df['Dòng máy'].value_counts().head(30)
+fig, ax = plt.subplots(figsize=(11, 7))
+top30.sort_values().plot(kind='barh', ax=ax, color=ACCENT)
+ax.set_title("Top 30 Dòng máy")
+ax.set_xlabel("Số listing")
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

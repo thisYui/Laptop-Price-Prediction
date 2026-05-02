@@ -1,0 +1,48 @@
+Cell Index: 239
+--- Source ---
+# ── Data Quality Score per listing ─────────────────────────────────────────────
+# Mỗi cột spec có giá trị = 1 điểm; thiếu = 0; scale 0–100%
+SCORE_COLS = {
+    'price':             'price',          # có giá parse được
+    'Hãng':              'Hãng',
+    'Tình trạng':        'Tình trạng',
+    'Kích cỡ màn hình':  'Kích cỡ màn hình',
+    'Bộ vi xử lý':       'Bộ vi xử lý',
+    'RAM':               'RAM',
+    'Card màn hình':     'Card màn hình',
+    'Ổ cứng':            'Ổ cứng',
+    'Loại ổ cứng':       'Loại ổ cứng',
+    'Xuất xứ':           'Xuất xứ',
+}
+
+score_df = pd.DataFrame({k: df[v].notna() for k, v in SCORE_COLS.items()})
+score_df['price_valid'] = df['_price'].notna()
+score_df = score_df.drop(columns='price')
+
+df['quality_score'] = score_df.mean(axis=1) * 100
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 4))
+
+# Histogram
+axes[0].hist(df['quality_score'], bins=20, color=ACCENT, edgecolor='white')
+axes[0].axvline(df['quality_score'].median(), color='red', linestyle='--',
+                label=f"Median: {df['quality_score'].median():.0f}%")
+axes[0].set_title("Data Quality Score per listing")
+axes[0].set_xlabel("Score (%)")
+axes[0].set_ylabel("Số listing")
+axes[0].legend()
+axes[0].spines[['top','right']].set_visible(False)
+
+# Score theo brand
+brand_score = (df.groupby('Hãng')['quality_score'].mean()
+               .sort_values(ascending=False).head(15).sort_values())
+brand_score.plot(kind='barh', ax=axes[1], color=COLORS[3])
+axes[1].set_title("Quality Score trung bình theo Hãng (top 15)")
+axes[1].set_xlabel("Score (%)")
+axes[1].spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()
+
+print(f"Median quality score: {df['quality_score'].median():.1f}%")
+print(f"Listing score = 100% (đầy đủ mọi cột): {(df['quality_score'] == 100).sum():,} ({(df['quality_score']==100).mean()*100:.1f}%)")
+print(f"Listing score < 50% (thiếu nhiều): {(df['quality_score'] < 50).sum():,} ({(df['quality_score']<50).mean()*100:.1f}%)")

@@ -1,0 +1,19 @@
+Cell Index: 7
+--- Source ---
+miss = missing_summary(df)
+
+if miss.empty:
+    print("Không có missing values.")
+else:
+    display(miss)
+    fig, ax = plt.subplots(figsize=(9, 4))
+    colors = ['#e63946' if v > 50 else '#f4a261' if v > 20 else '#457b9d'
+              for v in miss['%']]
+    ax.barh(miss.index[::-1], miss['%'][::-1], color=colors[::-1])
+    ax.axvline(50, color='red',    linestyle='--', alpha=0.5, label='>50%')
+    ax.axvline(20, color='orange', linestyle='--', alpha=0.5, label='>20%')
+    ax.set_xlabel('Missing %')
+    ax.set_title('Missing Values per Column')
+    ax.legend()
+    plt.tight_layout()
+    plt.show()

@@ -1,0 +1,67 @@
+Cell Index: 224
+--- Source ---
+# ── GPU tier vs CPU tier ───────────────────────────────────────────────────────
+
+# Nếu chưa có cpu_tier thì tạo bản đơn giản từ cột Bộ vi xử lý
+if 'cpu_tier' not in df.columns:
+    def extract_cpu_tier(x):
+        if pd.isna(x):
+            return 'Missing'
+        s = str(x).lower()
+
+        if re.search(r'\bi9\b|core i9', s):
+            return 'I9'
+        if re.search(r'\bi7\b|core i7', s):
+            return 'I7'
+        if re.search(r'\bi5\b|core i5', s):
+            return 'I5'
+        if re.search(r'\bi3\b|core i3', s):
+            return 'I3'
+        if 'ryzen 9' in s:
+            return 'Ryzen 9'
+        if 'ryzen 7' in s:
+            return 'Ryzen 7'
+        if 'ryzen 5' in s:
+            return 'Ryzen 5'
+        if 'ryzen 3' in s:
+            return 'Ryzen 3'
+        if re.search(r'\bm[1-4]\b', s):
+            return 'Apple M'
+        return 'Other/Unclear'
+
+    df['cpu_tier'] = df['Bộ vi xử lý'].apply(extract_cpu_tier)
+
+gpu_cpu = pd.crosstab(
+    df['gpu_tier'],
+    df['cpu_tier'],
+    normalize='index'
+) * 100
+
+# Sắp xếp một số tier phổ biến nếu có
+cpu_order = [
+    'I3', 'I5', 'I7', 'I9',
+    'Ryzen 3', 'Ryzen 5', 'Ryzen 7', 'Ryzen 9',
+    'Apple M', 'Other/Unclear', 'Missing'
+]
+cpu_cols = [c for c in cpu_order if c in gpu_cpu.columns]
+
+gpu_cpu = gpu_cpu[cpu_cols]
+
+display(gpu_cpu.round(2))
+
+fig, ax = plt.subplots(figsize=(11, 4))
+
+sns.heatmap(
+    gpu_cpu,
+    annot=True,
+    fmt=".1f",
+    cmap="Blues",
+    ax=ax
+)
+
+ax.set_title("Phân phối CPU Tier theo GPU Tier (%)")
+ax.set_xlabel("CPU Tier")
+ax.set_ylabel("GPU Tier")
+
+plt.tight_layout()
+plt.show()

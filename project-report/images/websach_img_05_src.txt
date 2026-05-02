@@ -1,0 +1,146 @@
+Cell Index: 22
+--- Source ---
+# ── 3.6 Cell-level relative outlier filter + reference price ────────────────
+# Sau domain filter, dùng row median làm anchor.
+# Null-out cell nếu price < 0.5 × row median hoặc price > 2.0 × row median.
+# Lý do: nếu 1 trong 3 giá lệch mạnh, median vẫn ổn định hơn mean.
+
+REL_LO = 0.5
+REL_HI = 2.0
+
+price_domain_wide = df[DOMAIN_PRICE_COLS].copy()
+
+# Anchor dùng median sau domain filter
+df["price_anchor_median"] = price_domain_wide.median(axis=1, skipna=True)
+
+relative_bad_mask = pd.DataFrame(
+    False,
+    index=df.index,
+    columns=DOMAIN_PRICE_COLS
+)
+
+for col in DOMAIN_PRICE_COLS:
+    relative_bad_mask[col] = (
+        df["n_prices_domain"].ge(2)
+        & price_domain_wide[col].notna()
+        & df["price_anchor_median"].gt(0)
+        & (
+            price_domain_wide[col].lt(REL_LO * df["price_anchor_median"])
+            | price_domain_wide[col].gt(REL_HI * df["price_anchor_median"])
+        )
+    )
+
+relative_outlier_counts = pd.DataFrame({
+    "relative_outlier_cells": relative_bad_mask.sum(),
+    "valid_after_domain": price_domain_wide.notna().sum(),
+})
+
+relative_outlier_counts["relative_outlier_%"] = (
+    relative_outlier_counts["relative_outlier_cells"]
+    / relative_outlier_counts["valid_after_domain"] * 100
+).round(2)
+
+print("Relative outliers by price slot:")
+display(relative_outlier_counts)
+
+# Chi tiết các cell bị relative outlier
+relative_outliers_long = []
+
+for domain_col, raw_col, name_col in zip(DOMAIN_PRICE_COLS, PRICE_COLS, NAME_COLS):
+    tmp = df.loc[
+        relative_bad_mask[domain_col],
+        [
+            "product_id",
+            raw_col,
+            name_col,
+            "price_anchor_median",
+            "price_spread_pct",
+        ]
+    ].copy()
+
+    tmp = tmp.rename(columns={
+        raw_col: "outlier_price",
+        name_col: "shop_name"
+    })
+
+    tmp["domain_col"] = domain_col
+    tmp["lower_bound"] = REL_LO * tmp["price_anchor_median"]
+    tmp["upper_bound"] = REL_HI * tmp["price_anchor_median"]
+    tmp["relative_to_median"] = tmp["outlier_price"] / tmp["price_anchor_median"]
+    tmp["price_spread_pct"] = tmp["price_spread_pct"] * 100
+
+    relative_outliers_long.append(tmp)
+
+relative_outliers_long = pd.concat(relative_outliers_long, ignore_index=True)
+
+round_cols = [
+    "outlier_price",
+    "price_anchor_median",
+    "lower_bound",
+    "upper_bound",
+    "relative_to_median",
+    "price_spread_pct",
+]
+
+relative_outliers_long[round_cols] = relative_outliers_long[round_cols].round(2)
+
+print(f"Total relative outlier cells: {len(relative_outliers_long):,}")
+
+display(
+    relative_outliers_long
+    .sort_values("relative_to_median", ascending=False)
+    .head(10)
+)
+
+print("Top shop names containing relative outliers:")
+display(
+    relative_outliers_long["shop_name"]
+    .value_counts()
+    .head(10)
+    .rename_axis("shop_name")
+    .to_frame("relative_outlier_cells")
+)
+
+# Tạo bộ giá final sau:
+# 1. domain filter
+# 2. relative filter theo row median
+FINAL_PRICE_COLS = [col.replace("_price", "_price_clean") for col in PRICE_COLS]
+
+price_final_wide = price_domain_wide.mask(relative_bad_mask, np.nan)
+price_final_wide.columns = FINAL_PRICE_COLS
+
+df[FINAL_PRICE_COLS] = price_final_wide
+
+df["n_prices_clean"] = df[FINAL_PRICE_COLS].notna().sum(axis=1)
+
+# Giá tham chiếu cuối cùng
+df["price_median"] = df[FINAL_PRICE_COLS].median(axis=1, skipna=True)
+df["price_mean"] = df[FINAL_PRICE_COLS].mean(axis=1, skipna=True)
+df["price_min"] = df[FINAL_PRICE_COLS].min(axis=1, skipna=True)
+df["price_max"] = df[FINAL_PRICE_COLS].max(axis=1, skipna=True)
+
+print("Số lượng giá còn lại sau full cleaning:")
+display(
+    df["n_prices_clean"]
+    .value_counts()
+    .sort_index()
+    .rename_axis("n_prices_clean")
+    .to_frame("rows")
+)
+
+print(f"Rows không còn giá hợp lệ sau full cleaning: {(df['n_prices_clean'] == 0).sum():,}")
+
+display(
+    df[["price_median", "price_mean", "price_min", "price_max", "n_prices_clean"]]
+    .describe()
+    .round(2)
+)
+
+plt.figure(figsize=(8, 4))
+plt.hist(df["price_median"].dropna(), bins=60, edgecolor="white", linewidth=0.4)
+plt.title("Final Reference Price Distribution: price_median")
+plt.xlabel("Triệu VND")
+plt.ylabel("Count")
+plt.xlim(0, min(250, max(df["price_median"].dropna().max(), PRICE_HI + 20)))
+plt.tight_layout()
+plt.show()

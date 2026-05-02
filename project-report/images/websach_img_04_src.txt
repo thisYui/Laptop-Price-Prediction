@@ -1,0 +1,124 @@
+Cell Index: 18
+--- Source ---
+# ── 3.5 Measure within-product price disagreement ───────────────────────────
+# Spread được tính sau domain filter.
+# Spread = (max price - min price) / row mean
+
+price_domain_wide = df[DOMAIN_PRICE_COLS].copy()
+
+df["price_row_mean_domain"] = price_domain_wide.mean(axis=1, skipna=True)
+df["price_row_median_domain"] = price_domain_wide.median(axis=1, skipna=True)
+df["price_row_min_domain"] = price_domain_wide.min(axis=1, skipna=True)
+df["price_row_max_domain"] = price_domain_wide.max(axis=1, skipna=True)
+
+df["price_spread_abs"] = df["price_row_max_domain"] - df["price_row_min_domain"]
+
+df["price_spread_pct"] = np.where(
+    df["price_row_mean_domain"].gt(0),
+    df["price_spread_abs"] / df["price_row_mean_domain"],
+    np.nan
+)
+
+df["flag_price_spread_warn"] = (
+    df["n_prices_domain"].ge(2)
+    & df["price_spread_pct"].gt(SPREAD_WARN)
+)
+
+df["flag_price_spread_critical"] = (
+    df["n_prices_domain"].ge(2)
+    & df["price_spread_pct"].gt(SPREAD_CRITICAL)
+)
+
+print(f"Rows with spread > {SPREAD_WARN:.0%}: {df['flag_price_spread_warn'].sum():,}")
+print(f"Rows with spread > {SPREAD_CRITICAL:.0%}: {df['flag_price_spread_critical'].sum():,}")
+
+# ── Summary table: chỉ nhân 100 cho các dòng không phải count ───────────────
+spread_series = df.loc[df["n_prices_domain"].ge(2), "price_spread_pct"].dropna()
+
+spread_summary = spread_series.describe(
+    percentiles=[0.5, 0.75, 0.9, 0.95, 0.99]
+).to_frame("price_spread_pct")
+
+spread_summary.loc[spread_summary.index != "count", "price_spread_pct"] *= 100
+spread_summary["price_spread_pct"] = spread_summary["price_spread_pct"].round(2)
+
+print("Spread summary among products with at least 2 valid prices:")
+display(spread_summary)
+
+# ── Histogram ───────────────────────────────────────────────────────────────
+plt.figure(figsize=(8, 4))
+plt.hist(
+    spread_series * 100,
+    bins=60,
+    edgecolor="white",
+    linewidth=0.4
+)
+plt.axvline(SPREAD_WARN * 100, linestyle="--", label=f">{SPREAD_WARN:.0%}")
+plt.axvline(SPREAD_CRITICAL * 100, linestyle="--", label=f">{SPREAD_CRITICAL:.0%}")
+plt.title("Within-Product Price Spread After Domain Filter")
+plt.xlabel("Spread % of row mean")
+plt.ylabel("Count")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# ── Inspect top high-spread products, compact view ──────────────────────────
+inspect_cols = [
+    "product_id",
+    "Hãng sản xuất",
+    "Công nghệ CPU",
+    "Loại CPU",
+    "Dung lượng RAM",
+    "Loại RAM",
+    "Loại ổ cứng",
+    "Dung lượng ổ cứng (GB)",
+    "Đồ họa đã làm sạch",
+    "Kích thước (inch)",
+    "shop_1_name",
+    "shop_1_price",
+    "shop_1_price_domain",
+    "shop_2_name",
+    "shop_2_price",
+    "shop_2_price_domain",
+    "shop_3_name",
+    "shop_3_price",
+    "shop_3_price_domain",
+    "n_prices_domain",
+    "price_row_mean_domain",
+    "price_row_median_domain",
+    "price_row_min_domain",
+    "price_row_max_domain",
+    "price_spread_abs",
+    "price_spread_pct",
+    "flag_price_spread_warn",
+    "flag_price_spread_critical",
+]
+
+top_spread = (
+    df.loc[df["flag_price_spread_warn"], inspect_cols]
+    .sort_values("price_spread_pct", ascending=False)
+    .head(10)
+    .copy()
+)
+
+# Hiển thị spread dạng %
+top_spread["price_spread_pct"] = (top_spread["price_spread_pct"] * 100).round(2)
+
+# Round các cột giá cho dễ nhìn
+price_like_cols = [
+    "shop_1_price",
+    "shop_1_price_domain",
+    "shop_2_price",
+    "shop_2_price_domain",
+    "shop_3_price",
+    "shop_3_price_domain",
+    "price_row_mean_domain",
+    "price_row_median_domain",
+    "price_row_min_domain",
+    "price_row_max_domain",
+    "price_spread_abs",
+]
+
+top_spread[price_like_cols] = top_spread[price_like_cols].round(2)
+
+display(top_spread)

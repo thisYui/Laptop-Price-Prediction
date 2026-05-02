@@ -1,0 +1,44 @@
+Cell Index: 220
+--- Source ---
+# ── GPU tier vs RAM distribution ───────────────────────────────────────────────
+
+# Nếu chưa có gpu_tier thì tạo nhanh từ cột Card màn hình
+if 'gpu_tier' not in df.columns:
+    def map_gpu_tier(x):
+        if pd.isna(x):
+            return 'Missing'
+        x = str(x).strip()
+        if x == 'NVIDIA':
+            return 'Dedicated — Other/Entry'
+        return 'Unclear'
+
+    df['gpu_tier'] = df['Card màn hình'].apply(map_gpu_tier)
+
+gpu_ram = pd.crosstab(
+    df['gpu_tier'],
+    df['_ram_gb'],
+    normalize='index'
+) * 100
+
+# Chỉ giữ các mức RAM phổ biến để dễ đọc
+common_ram_levels = [4, 8, 16, 32]
+gpu_ram_common = gpu_ram.reindex(columns=common_ram_levels)
+
+display(gpu_ram_common.round(2))
+
+fig, ax = plt.subplots(figsize=(8, 4))
+
+sns.heatmap(
+    gpu_ram_common,
+    annot=True,
+    fmt=".1f",
+    cmap="Blues",
+    ax=ax
+)
+
+ax.set_title("Phân phối RAM theo GPU Tier (%)")
+ax.set_xlabel("RAM (GB)")
+ax.set_ylabel("GPU Tier")
+
+plt.tight_layout()
+plt.show()

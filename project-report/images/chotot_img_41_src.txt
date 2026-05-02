@@ -1,0 +1,20 @@
+Cell Index: 231
+--- Source ---
+fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+
+# Loại ổ cứng
+loai_vc = df['Loại ổ cứng'].value_counts(dropna=False)
+loai_vc_plot = loai_vc[:10].sort_values()
+loai_vc_plot.plot(kind='barh', ax=axes[0], color=ACCENT)
+axes[0].set_title("Loại ổ cứng")
+axes[0].set_xlabel("Số listing")
+
+# Ổ cứng (dung lượng)
+ocung_vc = df['_storage_gb'].value_counts(dropna=False).head(20).sort_values()
+ocung_vc.plot(kind='barh', ax=axes[1], color=COLORS[1])
+axes[1].set_title("Ổ cứng (dung lượng) — top 20")
+axes[1].set_xlabel("Số listing")
+
+for ax in axes: ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

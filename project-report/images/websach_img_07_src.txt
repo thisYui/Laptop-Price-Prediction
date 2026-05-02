@@ -1,0 +1,17 @@
+Cell Index: 40
+--- Source ---
+# ── 4.3 Brand × Screen size heatmap ─────────────────────────────────────────
+screen_clean = df['Kích thước (inch)'].astype(str).str.replace(r'\.0$', '', regex=True)
+brand_screen = pd.crosstab(df['Hãng sản xuất'], screen_clean)
+
+common_screens = brand_screen.columns[brand_screen.sum() >= 5]
+brand_screen   = brand_screen[common_screens]
+
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.heatmap(brand_screen, annot=True, fmt='d', cmap='YlOrRd', ax=ax,
+            linewidths=0.4, cbar_kws={'label': 'count'})
+ax.set_title('Brand × Kích thước màn hình (count)')
+ax.set_xlabel('Inch')
+ax.set_ylabel('')
+plt.tight_layout()
+plt.show()

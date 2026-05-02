@@ -1,0 +1,47 @@
+Cell Index: 226
+--- Source ---
+# ── Median price by GPU tier and CPU tier ──────────────────────────────────────
+
+gpu_cpu_price = df.dropna(subset=['gpu_tier', 'cpu_tier', '_price']).copy()
+gpu_cpu_price = gpu_cpu_price[
+    gpu_cpu_price['_price'].between(1_000_000, 100_000_000)
+]
+
+gpu_cpu_price['price_m'] = gpu_cpu_price['_price'] / 1e6
+
+# Chỉ giữ CPU tier phổ biến để bảng dễ đọc
+valid_cpu_tiers = [
+    'I3', 'I5', 'I7', 'I9',
+    'Ryzen 5', 'Ryzen 7', 'Ryzen 9',
+    'Apple M', 'Other/Unclear'
+]
+
+gpu_cpu_price = gpu_cpu_price[
+    gpu_cpu_price['cpu_tier'].isin(valid_cpu_tiers)
+]
+
+gpu_cpu_price_pivot = (
+    gpu_cpu_price
+    .groupby(['gpu_tier', 'cpu_tier'])['price_m']
+    .median()
+    .unstack()
+)
+
+display(gpu_cpu_price_pivot.round(2))
+
+fig, ax = plt.subplots(figsize=(11, 4))
+
+sns.heatmap(
+    gpu_cpu_price_pivot,
+    annot=True,
+    fmt=".1f",
+    cmap="Blues",
+    ax=ax
+)
+
+ax.set_title("Median price theo GPU Tier và CPU Tier")
+ax.set_xlabel("CPU Tier")
+ax.set_ylabel("GPU Tier")
+
+plt.tight_layout()
+plt.show()

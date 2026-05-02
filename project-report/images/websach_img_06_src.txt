@@ -1,0 +1,79 @@
+Cell Index: 30
+--- Source ---
+# ── 3.10 Price analysis by product features ─────────────────────────────────
+
+def price_summary_by(col, min_n=30):
+    out = (
+        df.dropna(subset=["price_median"])
+        .groupby(col)
+        .agg(
+            n=("price_median", "size"),
+            mean_price=("price_median", "mean"),
+            median_price=("price_median", "median"),
+            q25_price=("price_median", lambda x: x.quantile(0.25)),
+            q75_price=("price_median", lambda x: x.quantile(0.75)),
+            min_price=("price_median", "min"),
+            max_price=("price_median", "max"),
+        )
+        .reset_index()
+    )
+
+    out["iqr_price"] = out["q75_price"] - out["q25_price"]
+
+    price_cols = [
+        "mean_price",
+        "median_price",
+        "q25_price",
+        "q75_price",
+        "iqr_price",
+        "min_price",
+        "max_price",
+    ]
+
+    out[price_cols] = out[price_cols].round(2)
+
+    return (
+        out.query("n >= @min_n")
+        .sort_values("median_price", ascending=False)
+        .reset_index(drop=True)
+    )
+
+
+print("Price by brand:")
+brand_price = price_summary_by("brand_clean", min_n=30)
+display(brand_price.head(20))
+
+print("Price by CPU brand:")
+display(price_summary_by("cpu_brand", min_n=30))
+
+print("Price by RAM tier:")
+display(price_summary_by("ram_tier", min_n=30))
+
+print("Price by storage tier:")
+display(price_summary_by("storage_tier", min_n=30))
+
+print("Price by GPU tier:")
+display(price_summary_by("gpu_tier", min_n=30))
+
+# Plot median price by top brands by volume
+top_brands = (
+    df["brand_clean"]
+    .value_counts()
+    .head(12)
+    .index
+)
+
+plot_brand_price = (
+    df[df["brand_clean"].isin(top_brands)]
+    .groupby("brand_clean")["price_median"]
+    .median()
+    .sort_values()
+)
+
+plt.figure(figsize=(8, 5))
+plt.barh(plot_brand_price.index, plot_brand_price.values)
+plt.title("Median Reference Price by Top Brands")
+plt.xlabel("Median price_median, triệu VND")
+plt.ylabel("Brand")
+plt.tight_layout()
+plt.show()

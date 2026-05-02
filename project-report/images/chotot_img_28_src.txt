@@ -1,0 +1,22 @@
+Cell Index: 172
+--- Source ---
+# ── Giá theo CPU Tier ────────────────────────────────────────────────────────────
+price_cpu = (df[df['_price'].between(1e6, 100e6)]
+             .assign(price_mil=lambda x: x['_price']/1e6))
+
+tier_order_plot = (price_cpu.groupby('cpu_tier_t')['price_mil']
+                   .median().sort_values(ascending=False).index.tolist())
+
+fig, ax = plt.subplots(figsize=(12, 5))
+sns.boxplot(data=price_cpu[price_cpu['cpu_tier_t'].isin(tier_order_plot[:10])],
+            x='cpu_tier_t', y='price_mil',
+            order=tier_order_plot[:10], palette='coolwarm', ax=ax)
+ax.set_title("Phân phối giá theo CPU Tier (1–100M)")
+ax.set_ylabel("Triệu đồng")
+ax.set_xlabel("")
+ax.set_xticklabels(ax.get_xticklabels(), rotation=35, ha='right')
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()
+
+df.drop(columns=['cpu_brand_t', 'cpu_tier_t', 'intel_gen_t'], inplace=True, errors='ignore')

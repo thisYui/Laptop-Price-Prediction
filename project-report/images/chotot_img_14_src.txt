@@ -1,0 +1,25 @@
+Cell Index: 76
+--- Source ---
+brand_counts = df['Hãng'].value_counts()
+print(f"Số brand distinct: {brand_counts.nunique()}")
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Top brands bar
+top15 = brand_counts.head(15).sort_values()
+top15.plot(kind='barh', ax=axes[0], color=ACCENT)
+axes[0].set_title("Top 15 Brand — số listing")
+axes[0].set_xlabel("Số listing")
+for i, v in enumerate(top15.values):
+    axes[0].text(v + 5, i, str(v), va='center', fontsize=9)
+
+# Pie: top 8 + Other
+top8 = brand_counts.head(8)
+other = brand_counts.iloc[8:].sum()
+pie_data = pd.concat([top8, pd.Series({'Khác': other})])
+axes[1].pie(pie_data.values, labels=pie_data.index, autopct='%1.1f%%',
+            colors=sns.color_palette("muted", len(pie_data)), startangle=140)
+axes[1].set_title("Thị phần listing theo Brand")
+
+plt.tight_layout()
+plt.show()

@@ -1,0 +1,16 @@
+Cell Index: 93
+--- Source ---
+# ── Dòng máy theo từng Hãng (top 5 brand) ──────────────────────────────────────
+top5_brands = df['Hãng'].value_counts().head(5).index.tolist()
+fig, axes = plt.subplots(1, 5, figsize=(18, 5))
+
+for ax, brand in zip(axes, top5_brands):
+    subset = df[df['Hãng'] == brand]['Dòng máy'].value_counts().head(8).sort_values()
+    subset.plot(kind='barh', ax=ax, color=ACCENT)
+    ax.set_title(brand, fontsize=11)
+    ax.set_xlabel("")
+    ax.spines[['top','right']].set_visible(False)
+
+plt.suptitle("Top 8 Dòng máy theo Hãng (top 5 brand)", fontsize=13, fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()

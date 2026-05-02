@@ -1,0 +1,29 @@
+Cell Index: 102
+--- Source ---
+# Tỷ lệ "Dòng Khác" theo từng Hãng
+
+dong_khac_by_brand = (
+    model_df
+    .assign(is_dong_khac=model_df[model_col].eq("Dòng Khác"))
+    .groupby(brand_col)
+    .agg(
+        count=(model_col, "size"),
+        dong_khac_count=("is_dong_khac", "sum"),
+        dong_khac_pct=("is_dong_khac", lambda s: round(s.mean() * 100, 2)),
+        distinct_models=(model_col, "nunique")
+    )
+    .sort_values(["dong_khac_pct", "count"], ascending=[False, False])
+    .reset_index()
+)
+
+display(dong_khac_by_brand.head(20))
+
+fig, ax = plt.subplots(figsize=(9, 5))
+plot_df = dong_khac_by_brand[dong_khac_by_brand["count"] >= 20].sort_values("dong_khac_pct").tail(15)
+ax.barh(plot_df[brand_col], plot_df["dong_khac_pct"], color=ACCENT)
+ax.set_title("Tỷ lệ 'Dòng Khác' theo Hãng (brand có >=20 listing)")
+ax.set_xlabel("Tỷ lệ Dòng Khác (%)")
+ax.set_ylabel("Hãng")
+ax.spines[["top", "right"]].set_visible(False)
+plt.tight_layout()
+plt.show()

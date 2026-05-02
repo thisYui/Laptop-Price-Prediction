@@ -1,0 +1,32 @@
+Cell Index: 76
+--- Source ---
+# ── 6.4 Storage type × capacity + price ─────────────────────────────────────
+stor_gb_clean = df['Dung lượng ổ cứng (GB)'].astype(str).str.replace(r'\.0$', '', regex=True)
+stor_cross    = pd.crosstab(df['Loại ổ cứng'], stor_gb_clean)
+
+common_gb  = stor_cross.columns[stor_cross.sum() >= 3]
+stor_cross = stor_cross[common_gb]
+
+fig, axes = plt.subplots(1, 2, figsize=(15, 4))
+
+sns.heatmap(stor_cross, annot=True, fmt='d', cmap='Blues', ax=axes[0], linewidths=0.4)
+axes[0].set_title('Loại ổ cứng × Dung lượng (GB)')
+axes[0].set_xlabel('GB')
+
+# Price by storage type — sns.boxplot thay df.boxplot
+stor_order = (
+    df.groupby('Loại ổ cứng')['price_median'].median()
+    .sort_values(ascending=False).index.tolist()
+)
+sns.boxplot(data=df, x='Loại ổ cứng', y='price_median', order=stor_order,
+            ax=axes[1],
+            flierprops=dict(marker='.', markersize=3, alpha=0.4),
+            medianprops=dict(color='crimson', linewidth=2),
+            boxprops=dict(alpha=0.7))
+axes[1].set_title('Price theo Loại ổ cứng')
+axes[1].set_ylabel('Triệu VND')
+axes[1].tick_params(axis='x', rotation=20)
+
+plt.suptitle('')
+plt.tight_layout()
+plt.show()

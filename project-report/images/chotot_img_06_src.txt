@@ -1,0 +1,59 @@
+Cell Index: 33
+--- Source ---
+# ── Phân phối giá ────────────────────────────────────────────────────────────────
+fig, axes = plt.subplots(1, 3, figsize=(16, 4))
+
+# ===== Full range =====
+axes[0].hist(price_mil, bins=100, color=ACCENT, edgecolor='white')
+
+mean_full = price_mil.mean()
+median_full = price_mil.median()
+
+axes[0].axvline(mean_full, color='yellow', linestyle='-', linewidth=2,
+                label=f'Mean: {mean_full:.1f}M')
+axes[0].axvline(median_full, color='red', linestyle='--', linewidth=2,
+                label=f'Median: {median_full:.1f}M')
+
+axes[0].legend(fontsize=9)
+axes[0].set_title("Toàn bộ (có outlier)")
+axes[0].set_xlabel("Triệu đồng")
+
+
+# ===== 1–40 triệu =====
+p1_100 = price_mil[(price_mil >= 1) & (price_mil <= 40)]
+axes[1].hist(p1_100, bins=80, color=COLORS[1], edgecolor='white')
+
+mean_zoom = p1_100.mean()
+median_zoom = p1_100.median()
+
+axes[1].axvline(mean_zoom, color='yellow', linestyle='-', linewidth=2,
+                label=f'Mean: {mean_zoom:.1f}M')
+axes[1].axvline(median_zoom, color='red', linestyle='--', linewidth=2,
+                label=f'Median: {median_zoom:.1f}M')
+
+axes[1].legend(fontsize=9)
+axes[1].set_title("Zoom: 1–50 triệu")
+axes[1].set_xlabel("Triệu đồng")
+
+
+# ===== Box & outlier detection =====
+Q1, Q3 = price_mil.quantile(.25), price_mil.quantile(.75)
+IQR = Q3 - Q1
+lo, hi = Q1 - 1.5*IQR, Q3 + 1.5*IQR
+n_outlier = ((price_mil < lo) | (price_mil > hi)).sum()
+
+axes[2].boxplot(price_mil[(price_mil >= 1) & (price_mil <= 150)],
+                vert=True, patch_artist=True,
+                boxprops=dict(facecolor=COLORS[2], alpha=0.6))
+
+axes[2].set_title(f"Boxplot (1–150M)\nOutlier IQR: {n_outlier} rows")
+axes[2].set_ylabel("Triệu đồng")
+
+
+# ===== Style =====
+for ax in axes:
+    ax.spines[['top','right']].set_visible(False)
+
+plt.suptitle("Phân phối giá — Chợ Tốt", fontsize=14, fontweight='bold', y=1.02)
+plt.tight_layout()
+plt.show()

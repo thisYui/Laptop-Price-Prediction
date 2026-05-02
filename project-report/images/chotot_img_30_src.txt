@@ -1,0 +1,28 @@
+Cell Index: 190
+--- Source ---
+# ── Visualization RAM ───────────────────────────────────────────────────────────
+ram_vc = df['_ram_gb'].value_counts().sort_index()
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 4))
+
+axes[0].bar(ram_vc.index.astype(str), ram_vc.values,
+            color=COLORS[:len(ram_vc)], edgecolor='white')
+axes[0].set_title("Phân phối RAM (GB)")
+axes[0].set_xlabel("GB")
+axes[0].set_ylabel("Số listing")
+for i, (x, v) in enumerate(zip(ram_vc.index.astype(str), ram_vc.values)):
+    axes[0].text(i, v + 5, str(v), ha='center', fontsize=9)
+
+# Giá theo RAM
+price_ram = (df[df['_price'].between(1e6, 100e6) & df['_ram_gb'].notna()]
+             .assign(price_mil=lambda x: x['_price']/1e6))
+ram_order = sorted(price_ram['_ram_gb'].unique())
+sns.boxplot(data=price_ram, x='_ram_gb', y='price_mil',
+            order=ram_order, palette='Blues', ax=axes[1])
+axes[1].set_title("Giá theo RAM (1–100M)")
+axes[1].set_xlabel("RAM (GB)")
+axes[1].set_ylabel("Triệu đồng")
+
+for ax in axes: ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

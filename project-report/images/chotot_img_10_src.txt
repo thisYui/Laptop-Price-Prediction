@@ -1,0 +1,11 @@
+Cell Index: 48
+--- Source ---
+val = df['_value_simple'].dropna()
+
+upper = val.quantile(0.99)   # hoặc 0.995 1 số outlier cực lớn phá distribution sẽ xử l sau tạm thời dùng 0.99
+val_cut = val[val <= upper]
+
+plt.figure(figsize=(6,4))
+sns.histplot(val_cut, bins=50)
+plt.title("Value Score (≤ 99th percentile)")
+plt.show()

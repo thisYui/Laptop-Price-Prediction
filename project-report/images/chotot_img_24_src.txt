@@ -1,0 +1,15 @@
+Cell Index: 145
+--- Source ---
+# ── Giá theo nhóm bảo hành ──────────────────────────────────────────────────────
+wty_price = (df[df['_price'].between(1e6, 100e6)]
+             .assign(price_mil=lambda x: x['_price']/1e6)
+             .groupby('Chính sách bảo hành')['price_mil']
+             .median().sort_values(ascending=False))
+
+fig, ax = plt.subplots(figsize=(10, 4))
+wty_price.sort_values().plot(kind='barh', ax=ax, color=COLORS[2])
+ax.set_title("Median giá theo Chính sách bảo hành")
+ax.set_xlabel("Triệu đồng (median)")
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

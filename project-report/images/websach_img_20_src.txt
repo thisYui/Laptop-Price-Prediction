@@ -1,0 +1,28 @@
+Cell Index: 96
+--- Source ---
+df["log_price_median"] = np.log1p(df["price_median"])
+
+target_summary = pd.DataFrame({
+    "price_median": df["price_median"].describe(),
+    "log_price_median": df["log_price_median"].describe()
+}).round(3)
+
+display(target_summary)
+
+print(f"Skew price_median    : {df['price_median'].skew():.2f}")
+print(f"Skew log_price_median: {df['log_price_median'].skew():.2f}")
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(df["price_median"].dropna(), bins=60, edgecolor="white", linewidth=0.4)
+axes[0].set_title("price_median distribution")
+axes[0].set_xlabel("Triệu VND")
+axes[0].set_ylabel("Count")
+
+axes[1].hist(df["log_price_median"].dropna(), bins=60, edgecolor="white", linewidth=0.4)
+axes[1].set_title("log1p(price_median) distribution")
+axes[1].set_xlabel("log1p(price_median)")
+axes[1].set_ylabel("Count")
+
+plt.tight_layout()
+plt.show()

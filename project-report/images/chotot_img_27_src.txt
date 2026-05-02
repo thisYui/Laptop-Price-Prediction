@@ -1,0 +1,80 @@
+Cell Index: 170
+--- Source ---
+# ── Visualization CPU ──────────────────────────────────────────────────────────
+fig, axes = plt.subplots(1, 3, figsize=(17, 5))
+
+# ── CPU Brand ──────────────────────────────────────────────────────────────────
+brand_vc = df['cpu_brand_t'].value_counts()
+axes[0].pie(
+    brand_vc.values,
+    labels=brand_vc.index,
+    autopct='%1.1f%%',
+    colors=sns.color_palette("muted", len(brand_vc)),
+    startangle=90
+)
+axes[0].set_title("CPU Brand")
+
+# ── CPU Tier ───────────────────────────────────────────────────────────────────
+tier_order = [
+    'I9', 'I7', 'Core Ultra', 'I5', 'I3',
+    'Ryzen 9', 'Ryzen 7', 'Ryzen 5', 'Ryzen 3',
+    'Apple M-series', 'Budget', 'Missing', 'Other/Unknown'
+]
+
+tier_vc_raw = df['cpu_tier_t'].value_counts()
+tier_vc = tier_vc_raw.reindex(tier_order).dropna()
+
+tier_vc.sort_values().plot(
+    kind='barh',
+    ax=axes[1],
+    color=COLORS[1]
+)
+axes[1].set_title("CPU Tier (theo số listing)")
+
+# ── Intel Generation (bar chart, không phải histogram) ─────────────────────────
+gen_vc = (
+    df['intel_gen_t']
+    .dropna()
+    .astype(int)
+    .value_counts()
+    .sort_index()
+)
+
+if not gen_vc.empty:
+    axes[2].bar(
+        gen_vc.index.astype(str),
+        gen_vc.values,
+        color=COLORS[4],
+        edgecolor='white'
+    )
+
+    axes[2].set_title(f"Intel Generation — {gen_vc.sum():,} listings")
+    axes[2].set_xlabel("Thế hệ Intel")
+    axes[2].set_ylabel("Số listing")
+
+    # label trên cột
+    for i, v in enumerate(gen_vc.values):
+        axes[2].text(
+            i,
+            v + max(gen_vc.values) * 0.02,
+            f"{v:,}",
+            ha='center',
+            fontsize=8
+        )
+else:
+    axes[2].text(
+        0.5, 0.5,
+        "Không có dữ liệu",
+        ha='center',
+        va='center',
+        transform=axes[2].transAxes
+    )
+    axes[2].set_title("Intel Generation")
+
+# ── Style ──────────────────────────────────────────────────────────────────────
+for ax in axes:
+    ax.spines[['top', 'right']].set_visible(False)
+
+plt.suptitle("Phân tích Bộ vi xử lý", fontsize=14, fontweight='bold', y=1.02)
+plt.tight_layout()
+plt.show()

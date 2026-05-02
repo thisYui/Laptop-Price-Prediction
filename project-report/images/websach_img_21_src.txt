@@ -1,0 +1,114 @@
+Cell Index: 98
+--- Source ---
+from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
+
+model_df = df[
+    [
+        "log_price_median",
+        "brand_clean",
+        "cpu_brand",
+        "cpu_tier",
+        "ram_tier_clean",
+        "ram_type_clean",
+        "storage_tier_clean",
+        "storage_type_clean",
+        "gpu_tier_v2",
+        "screen_size_group",
+    ]
+].dropna(subset=["log_price_median"]).copy()
+
+cat_features = [
+    "brand_clean",
+    "cpu_brand",
+    "cpu_tier",
+    "ram_tier_clean",
+    "ram_type_clean",
+    "storage_tier_clean",
+    "storage_type_clean",
+    "gpu_tier_v2",
+    "screen_size_group",
+]
+
+X = model_df[cat_features]
+y = model_df["log_price_median"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,
+    random_state=42
+)
+
+preprocess = ColumnTransformer(
+    transformers=[
+        ("cat", OneHotEncoder(handle_unknown="ignore"), cat_features)
+    ],
+    remainder="drop"
+)
+
+rf = RandomForestRegressor(
+    n_estimators=300,
+    random_state=42,
+    min_samples_leaf=5,
+    n_jobs=-1
+)
+
+pipe = Pipeline([
+    ("preprocess", preprocess),
+    ("model", rf)
+])
+
+pipe.fit(X_train, y_train)
+
+pred_log = pipe.predict(X_test)
+pred_price = np.expm1(pred_log)
+true_price = np.expm1(y_test)
+
+mae = mean_absolute_error(true_price, pred_price)
+r2 = r2_score(y_test, pred_log)
+
+print(f"MAE on price_median: {mae:.2f} triệu VND")
+print(f"R² on log_price_median: {r2:.3f}")
+
+# Feature importance aggregated back to original feature groups
+ohe = pipe.named_steps["preprocess"].named_transformers_["cat"]
+feature_names = ohe.get_feature_names_out(cat_features)
+
+importances = pipe.named_steps["model"].feature_importances_
+
+imp = pd.DataFrame({
+    "encoded_feature": feature_names,
+    "importance": importances
+})
+
+imp["feature_group"] = imp["encoded_feature"].str.split("_").str[0]
+
+# Better group extraction because feature names contain original col names
+def get_feature_group(encoded_name):
+    for col in cat_features:
+        if encoded_name.startswith(col + "_"):
+            return col
+    return "other"
+
+imp["feature_group"] = imp["encoded_feature"].apply(get_feature_group)
+
+group_imp = (
+    imp.groupby("feature_group")["importance"]
+    .sum()
+    .sort_values(ascending=False)
+    .to_frame("importance")
+)
+
+display(group_imp)
+
+plt.figure(figsize=(8, 4))
+plt.barh(group_imp.index[::-1], group_imp["importance"].values[::-1])
+plt.title("Aggregated Feature Importance — Baseline RF")
+plt.xlabel("Importance")
+plt.ylabel("Feature group")
+plt.tight_layout()
+plt.show()

@@ -1,0 +1,114 @@
+Cell Index: 64
+--- Source ---
+# ── 5.8 CPU tier extraction and price analysis ──────────────────────────────
+
+def extract_cpu_tier(cpu_tech, cpu_model):
+    text = f"{cpu_tech} {cpu_model}".lower()
+
+    # Apple
+    if "m4 max" in text or "m3 max" in text or "m2 max" in text:
+        return "High-end"
+    if "m4 pro" in text or "m3 pro" in text or "m2 pro" in text:
+        return "Upper-mid"
+    if re.search(r"\bm[1-4]\b", text):
+        return "Mid-range"
+
+    # Intel / AMD high-end
+    if (
+        "core ultra 9" in text
+        or "ultra 9" in text
+        or "core i9" in text
+        or "i9" in text
+        or "ryzen 9" in text
+    ):
+        return "High-end"
+
+    if (
+        "core ultra 7" in text
+        or "ultra 7" in text
+        or "core i7" in text
+        or "i7" in text
+        or "ryzen 7" in text
+    ):
+        return "Upper-mid"
+
+    if (
+        "core ultra 5" in text
+        or "ultra 5" in text
+        or "core i5" in text
+        or "i5" in text
+        or "ryzen 5" in text
+    ):
+        return "Mid-range"
+
+    if (
+        "core i3" in text
+        or "i3" in text
+        or "ryzen 3" in text
+    ):
+        return "Entry"
+
+    if (
+        "celeron" in text
+        or "pentium" in text
+        or "atom" in text
+        or "n100" in text
+        or "n200" in text
+    ):
+        return "Low-end"
+
+    if "snapdragon" in text or "qualcomm" in text or "microsoft sq" in text:
+        return "ARM/Other"
+
+    return "Unknown"
+
+
+df["cpu_tier"] = df.apply(
+    lambda row: extract_cpu_tier(row["Công nghệ CPU"], row["Loại CPU"]),
+    axis=1
+)
+
+print("CPU tier distribution:")
+display(
+    df["cpu_tier"]
+    .value_counts(dropna=False)
+    .rename_axis("cpu_tier")
+    .to_frame("rows")
+)
+
+cpu_tier_price = (
+    df.dropna(subset=["price_median"])
+    .groupby("cpu_tier")
+    .agg(
+        n=("price_median", "size"),
+        mean_price=("price_median", "mean"),
+        median_price=("price_median", "median"),
+        q25_price=("price_median", lambda x: x.quantile(0.25)),
+        q75_price=("price_median", lambda x: x.quantile(0.75)),
+        min_price=("price_median", "min"),
+        max_price=("price_median", "max"),
+    )
+    .reset_index()
+)
+
+price_cols = ["mean_price", "median_price", "q25_price", "q75_price", "min_price", "max_price"]
+cpu_tier_price[price_cols] = cpu_tier_price[price_cols].round(2)
+
+display(
+    cpu_tier_price
+    .sort_values("median_price", ascending=False)
+)
+
+plt.figure(figsize=(8, 4))
+sns.boxplot(
+    data=df[df["cpu_tier"].ne("Unknown")],
+    x="cpu_tier",
+    y="price_median",
+    order=["Low-end", "Entry", "Mid-range", "Upper-mid", "High-end", "ARM/Other"]
+)
+plt.title("Price by CPU Tier")
+plt.xlabel("CPU tier")
+plt.ylabel("Triệu VND")
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()

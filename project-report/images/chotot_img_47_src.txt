@@ -1,0 +1,27 @@
+Cell Index: 256
+--- Source ---
+# ── Heatmap tương quan RAM × Storage × Giá ────────────────────────────────────────
+df['ram_gb_t']  = pd.to_numeric(df['RAM'].str.extract(r'(\d+)')[0], errors='coerce')
+df['stor_gb_t'] = df['Ổ cứng'].apply(parse_storage_gb)
+
+pivot = (df[df['_price'].between(1e6, 100e6) &
+            df['ram_gb_t'].notna() &
+            df['stor_gb_t'].notna()]
+         .assign(price_mil=lambda x: x['_price']/1e6)
+         .groupby(['ram_gb_t', 'stor_gb_t'])['price_mil']
+         .median()
+         .unstack('stor_gb_t')
+         .reindex([4, 8, 12, 16, 24, 32, 64])  # RAM rows
+         )
+
+fig, ax = plt.subplots(figsize=(11, 5))
+sns.heatmap(pivot, annot=True, fmt='.0f', cmap='YlOrRd',
+            linewidths=0.5, ax=ax,
+            cbar_kws={'label': 'Median giá (triệu đồng)'})
+ax.set_title("Median giá (triệu đồng) theo RAM × Storage (GB)")
+ax.set_xlabel("Storage (GB)")
+ax.set_ylabel("RAM (GB)")
+plt.tight_layout()
+plt.show()
+
+df.drop(columns=['ram_gb_t', 'stor_gb_t'], inplace=True, errors='ignore')

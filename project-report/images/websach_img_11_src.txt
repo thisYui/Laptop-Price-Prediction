@@ -1,0 +1,46 @@
+Cell Index: 56
+--- Source ---
+# ── 5.4 Price by CPU brand & RAM tier ───────────────────────────────────────
+fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+
+# CPU brand
+cpu_order = (
+    df.groupby('cpu_brand')['price_median'].median()
+    .sort_values(ascending=False).index.tolist()
+)
+sns.boxplot(data=df, x='cpu_brand', y='price_median', order=cpu_order,
+            ax=axes[0],
+            flierprops=dict(marker='.', markersize=3, alpha=0.4),
+            medianprops=dict(color='crimson', linewidth=2),
+            boxprops=dict(alpha=0.7))
+axes[0].set_title('Price theo CPU Brand')
+axes[0].set_xlabel('')
+axes[0].set_ylabel('Triệu VND')
+axes[0].tick_params(axis='x', rotation=20)
+
+# RAM tier
+ram_num = pd.to_numeric(df['Dung lượng RAM'], errors='coerce')
+df['ram_tier'] = pd.cut(
+    ram_num, bins=[0, 8, 16, 32, 999],
+    labels=['≤8 GB', '16 GB', '32 GB', '>32 GB']
+)
+ram_order = ['≤8 GB', '16 GB', '32 GB', '>32 GB']
+sns.boxplot(data=df, x='ram_tier', y='price_median', order=ram_order,
+            ax=axes[1],
+            flierprops=dict(marker='.', markersize=3, alpha=0.4),
+            medianprops=dict(color='steelblue', linewidth=2),
+            boxprops=dict(alpha=0.7))
+axes[1].set_title('Price theo RAM Tier')
+axes[1].set_xlabel('')
+axes[1].set_ylabel('Triệu VND')
+
+plt.tight_layout()
+plt.show()
+
+print("Median price theo CPU brand:")
+display(
+    df.groupby('cpu_brand')['price_median']
+    .agg(['median', 'count']).round(1)
+    .sort_values('median', ascending=False)
+    .rename(columns={'median': 'median_price', 'count': 'n'})
+)

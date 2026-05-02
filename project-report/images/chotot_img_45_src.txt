@@ -1,0 +1,38 @@
+Cell Index: 245
+--- Source ---
+# ── Count matrix: Storage type × Storage capacity ─────────────────────────────
+
+storage_cross = df.copy()
+
+storage_cross['_storage_type_clean'] = storage_cross[storage_type_col].fillna('Missing')
+storage_cross['_storage_gb_clean'] = storage_cross['_storage_gb'].fillna('Missing')
+
+common_storage_levels = [128.0, 250.0, 256.0, 320.0, 480.0, 500.0, 512.0, 640.0, 750.0, 1024.0]
+
+storage_count_matrix = pd.crosstab(
+    storage_cross['_storage_type_clean'],
+    storage_cross['_storage_gb_clean']
+)
+
+# Chỉ lấy các dung lượng phổ biến có tồn tại trong data
+existing_cols = [c for c in common_storage_levels if c in storage_count_matrix.columns]
+storage_count_matrix_plot = storage_count_matrix[existing_cols]
+
+display(storage_count_matrix_plot)
+
+fig, ax = plt.subplots(figsize=(11, 4))
+
+sns.heatmap(
+    storage_count_matrix_plot,
+    annot=True,
+    fmt=".0f",
+    cmap="Blues",
+    ax=ax
+)
+
+ax.set_title("Số listing theo Loại ổ cứng × Dung lượng")
+ax.set_xlabel("Storage (GB)")
+ax.set_ylabel("Loại ổ cứng")
+
+plt.tight_layout()
+plt.show()

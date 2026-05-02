@@ -1,0 +1,10 @@
+\section{Giới thiệu bài toán}
+\label{sec:introduction}
+
+Thị trường laptop tại Việt Nam có đặc điểm phân mảnh cao với sự đan xen giữa hai phân khúc chính: laptop mới chính hãng và laptop đã qua sử dụng (second-hand). Giá cả giữa hai phân khúc này chênh lệch đáng kể và chịu ảnh hưởng bởi nhiều yếu tố như cấu hình phần cứng (CPU, RAM, GPU, ổ cứng), thương hiệu, tình trạng máy, chính sách bảo hành, và kích thước màn hình. Việc định giá chính xác một chiếc laptop --- đặc biệt trên các nền tảng thương mại điện tử nơi người bán tự khai báo thông tin --- là một bài toán phức tạp do dữ liệu thường không đồng nhất và chứa nhiều nhiễu.
+
+Báo cáo này trình bày quá trình xây dựng hệ thống dự đoán giá laptop dựa trên phương pháp học máy (Machine Learning). Dữ liệu được thu thập từ hai nguồn trực tuyến: \textbf{Chợ Tốt} --- marketplace cho laptop đã qua sử dụng với 5.866 tin đăng, và \textbf{Websosanh} --- nền tảng so sánh giá cho laptop mới với 4.384 sản phẩm. Hai nguồn dữ liệu bổ sung cho nhau về phạm vi bao phủ thị trường, tuy nhiên đặt ra thách thức về tích hợp do khác biệt về schema, chất lượng dữ liệu, và ngữ nghĩa các trường.
+
+Mục tiêu cụ thể của báo cáo gồm: (1)~mô tả phương pháp và quy trình thu thập dữ liệu từ hai nguồn, (2)~trình bày các bước làm sạch và tiền xử lý, (3)~phân tích khám phá dữ liệu toàn diện với thống kê mô tả và phân tích mối quan hệ giữa các thuộc tính, (4)~đánh giá chất lượng dữ liệu, và (5)~xây dựng baseline model để kiểm chứng khả năng dự đoán giá từ tập dữ liệu đã chuẩn bị.
+
+Cấu trúc báo cáo như sau: \cref{sec:data-collection} trình bày nguồn và phương pháp thu thập dữ liệu. \cref{sec:data-cleaning} mô tả quy trình làm sạch. \cref{sec:data-quality} đánh giá chất lượng dữ liệu. \cref{sec:data-management} nêu cách tổ chức lưu trữ. \cref{sec:eda} là phần phân tích khám phá dữ liệu. \cref{sec:results} trình bày kết quả baseline model. Cuối cùng, \cref{sec:conclusion} tổng hợp các phát hiện chính và định hướng tiếp theo.

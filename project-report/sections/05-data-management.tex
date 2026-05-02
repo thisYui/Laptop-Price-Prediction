@@ -1,0 +1,55 @@
+\section{Lưu trữ và quản lý dữ liệu}
+\label{sec:data-management}
+
+\subsection{Cấu trúc thư mục}
+
+Dự án được tổ chức theo mô hình modular, phân tách rõ giữa mã nguồn, dữ liệu, pipeline, và cấu hình:
+
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\small, frame=single, caption={Cấu trúc thư mục dự án}, label={lst:project-structure}]
+Laptop-Price-Prediction/
+  config/
+    chotot_collection.yml
+    websosanh_collection.yml
+  data/raw/
+    chotot_laptop_data.csv       (5.866 rows, 1.54 MB)
+    laptop_features.csv          (raw websosanh, 3.69 MB)
+    clean_laptop_features.csv    (cleaned, 575 KB)
+    websosanh_product_links.txt  (URLs, 442 KB)
+  src/data/
+    chotot_collect.py
+    collect.py
+    data_cleaning.py
+  pipeline/
+    collection_data_pipeline.py
+    clean_data_pipeline.py
+  scripts/
+    chotot_collection_run.py
+    collection_data_run.py
+  notebooks/data/
+    01a_chotot_inspection.ipynb
+    01b_websach_inspection.ipynb
+  artifacts/encoders/
+    brand_mapping.json
+\end{lstlisting}
+
+\subsection{Quản lý cấu hình}
+
+Cấu hình cho mỗi nguồn được lưu dưới dạng YAML, cho phép thay đổi các tham số scraping (base URL, headers, delay, số trang) mà không cần sửa mã nguồn. File \texttt{brand\_mapping.json} chứa ánh xạ 12 hãng laptop $\rightarrow$ ID category của Websosanh.
+
+\subsection{Định dạng lưu trữ}
+
+Toàn bộ dữ liệu sử dụng định dạng CSV (Comma-Separated Values) với encoding UTF-8. CSV được chọn vì: (1)~đơn giản và tương thích cao với \texttt{pandas}\cite{mckinney2010pandas}, (2)~dễ kiểm tra bằng text editor, và (3)~phù hợp với quy mô dữ liệu ($<$ 10 MB tổng cộng). Đối với dự án lớn hơn, có thể xem xét Parquet hoặc database engine, tuy nhiên ở quy mô hiện tại CSV là đủ hiệu quả.
+
+\subsection{Pipeline tái tạo}
+
+Toàn bộ quy trình từ thu thập đến cleaning có thể tái tạo bằng cách chạy lần lượt:
+\begin{lstlisting}[language=bash, caption={Lệnh tái tạo dữ liệu}, label={lst:reproduce}]
+# 1. Thu thap du lieu
+python scripts/chotot_collection_run.py
+python scripts/collection_data_run.py --brand all
+
+# 2. Lam sach du lieu
+python scripts/data_cleaning.py
+\end{lstlisting}
+
+Mỗi script hỗ trợ tham số dòng lệnh (argparse) để kiểm soát phạm vi crawl và các option cleaning.

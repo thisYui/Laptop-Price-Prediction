@@ -1,0 +1,86 @@
+Cell Index: 180
+--- Source ---
+# ── CPU tier × RAM interaction ─────────────────────────────────────────────────
+
+def parse_ram_gb_for_cpu(val):
+    if pd.isna(val):
+        return np.nan
+
+    v = str(val).upper().strip()
+
+    if "<1" in v:
+        return 0.5
+    if ">128" in v:
+        return 256
+    if ">32" in v:
+        return 64
+
+    m = re.search(r"(\d+)\s*GB", v)
+    return float(m.group(1)) if m else np.nan
+
+
+df["_ram_gb_cpu_tmp"] = df["RAM"].apply(parse_ram_gb_for_cpu)
+
+cpu_ram = (
+    df[df["_price"].between(1e6, 100e6)]
+    .copy()
+    .assign(price_mil=lambda x: x["_price"] / 1e6)
+)
+
+# Median price matrix
+median_matrix = (
+    cpu_ram
+    .pivot_table(
+        index="_cpu_tier_all",
+        columns="_ram_gb_cpu_tmp",
+        values="price_mil",
+        aggfunc="median"
+    )
+)
+
+# Count matrix để mask nhóm quá ít mẫu
+count_matrix = (
+    cpu_ram
+    .pivot_table(
+        index="_cpu_tier_all",
+        columns="_ram_gb_cpu_tmp",
+        values="price_mil",
+        aggfunc="size"
+    )
+)
+
+# Sắp xếp tier theo median price tổng thể
+tier_order_by_price = (
+    cpu_ram
+    .groupby("_cpu_tier_all")["price_mil"]
+    .median()
+    .sort_values(ascending=False)
+    .index
+)
+
+median_matrix = median_matrix.reindex(tier_order_by_price)
+
+# Chỉ giữ các RAM phổ biến
+common_ram_cols = [c for c in [4, 8, 16, 32, 64] if c in median_matrix.columns]
+median_matrix = median_matrix[common_ram_cols]
+count_matrix = count_matrix.reindex(tier_order_by_price)[common_ram_cols]
+
+# Mask cell có sample nhỏ
+median_matrix_masked = median_matrix.mask(count_matrix < 20)
+
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.heatmap(
+    median_matrix_masked,
+    annot=True,
+    fmt=".1f",
+    cmap="YlGnBu",
+    linewidths=0.5,
+    ax=ax
+)
+ax.set_title("Median price theo CPU Tier × RAM\n(chỉ hiển thị cell có >=20 listings)")
+ax.set_xlabel("RAM (GB)")
+ax.set_ylabel("CPU Tier")
+plt.tight_layout()
+plt.show()
+
+display(count_matrix.fillna(0).astype(int))

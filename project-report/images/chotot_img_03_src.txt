@@ -1,0 +1,25 @@
+Cell Index: 23
+--- Source ---
+n_miss_spec = df[spec_cols].isnull().sum(axis=1)
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 4))
+
+vc = n_miss_spec.value_counts().sort_index()
+axes[0].bar(vc.index.astype(str), vc.values, color=COLORS[:len(vc)], edgecolor='white')
+axes[0].set_title("Số cột spec bị missing cùng 1 listing")
+axes[0].set_xlabel("Số cột missing")
+axes[0].set_ylabel("Số listing")
+for i, (x, y) in enumerate(zip(vc.index.astype(str), vc.values)):
+    axes[0].text(i, y + 5, str(y), ha='center', fontsize=10)
+
+brand_miss = df.copy()
+brand_miss['n_miss_spec'] = n_miss_spec
+brand_miss = brand_miss.groupby('Hãng')['n_miss_spec'].mean().sort_values(ascending=False).head(15)
+brand_miss.sort_values().plot(kind='barh', ax=axes[1], color=ACCENT)
+axes[1].set_title("Trung bình số cột spec missing theo Hãng (top 15)")
+axes[1].set_xlabel("Số cột missing trung bình")
+plt.tight_layout()
+plt.show()
+
+print(f"\nListing missing 0 cột spec: {(n_miss_spec == 0).sum():,} ({(n_miss_spec==0).mean()*100:.1f}%)")
+print(f"Listing missing ≥ 3 cột spec: {(n_miss_spec >= 3).sum():,} ({(n_miss_spec>=3).mean()*100:.1f}%)")

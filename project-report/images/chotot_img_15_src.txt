@@ -1,0 +1,24 @@
+Cell Index: 80
+--- Source ---
+# ── Giá trung bình theo brand (top 10) ──────────────────────────────────────────
+top10_brands = brand_counts.head(10).index
+price_by_brand = (df[df['Hãng'].isin(top10_brands)]
+                  .groupby('Hãng')['_price']
+                  .agg(['median', 'mean', 'count'])
+                  .sort_values('median', ascending=False))
+price_by_brand.columns = ['Median (VNĐ)', 'Mean (VNĐ)', 'Count']
+
+fig, ax = plt.subplots(figsize=(11, 4))
+brands_sorted = price_by_brand.index.tolist()
+medians_mil   = price_by_brand['Median (VNĐ)'] / 1e6
+ax.bar(brands_sorted, medians_mil, color=COLORS[:len(brands_sorted)], edgecolor='white')
+ax.set_title("Median giá theo Brand (top 10 listing)")
+ax.set_ylabel("Triệu đồng")
+ax.set_xlabel("")
+for i, v in enumerate(medians_mil):
+    ax.text(i, v + 0.3, f"{v:.1f}M", ha='center', fontsize=9)
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()
+display(price_by_brand.assign(**{'Median (M)': price_by_brand['Median (VNĐ)']/1e6,
+                                   'Mean (M)':   price_by_brand['Mean (VNĐ)']/1e6})[['Median (M)', 'Mean (M)', 'Count']].round(1))

@@ -1,0 +1,6 @@
+Cell Index: 21
+--- Source ---
+# ── Missing cùng lúc nhiều cột spec ───────────────────────────────────────────
+spec_cols = ['Kích cỡ màn hình', 'Bộ vi xử lý', 'RAM',
+             'Card màn hình', 'Ổ cứng', 'Loại ổ cứng']
+msno.matrix(df[spec_cols], figsize=(10, 4), sparkline=False)

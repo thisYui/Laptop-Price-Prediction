@@ -1,0 +1,217 @@
+% Main report document — Báo cáo về Dữ liệu
+% Laptop Price Prediction — CSC14005
+% Only preamble, title page, and \input calls
+
+\documentclass[12pt]{article}
+
+%=============================================================================
+% REPORT INFORMATION
+%=============================================================================
+\newcommand{\tenkhoa}{Khoa Công nghệ Thông tin}
+\newcommand{\tenmonhoc}{CSC14005 -- Xây dựng và Triển khai Hệ thống Học máy Ứng dụng}
+\newcommand{\tendetaibaocao}{Báo cáo về Dữ liệu:\\Dự đoán Giá Laptop tại Thị trường Việt Nam}
+\newcommand{\danhsachsinhvien}{%
+Nguyễn Quang Duy & - 23120245 \\[0.1cm]
+Lưu Trọng Hiếu & - 23120258 \\[0.1cm]
+Văn Đình Hiếu & - 23120260%
+}
+\newcommand{\hovatenGV}{[Giảng viên hướng dẫn]}
+\newcommand{\thangnam}{Tháng 5, 2026}
+%=============================================================================
+
+%----------------------------------------------------------------------------------------
+% PACKAGES
+%----------------------------------------------------------------------------------------
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,vietnamese]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{longtable}
+
+\setlength{\marginparwidth}{2cm}
+
+\usepackage[unicode,bookmarksnumbered,bookmarksopen]{hyperref}
+
+\geometry{a4paper, margin=2.5cm, top=3.5cm, bottom=2.5cm, headheight=1.6cm, headsep=0.8cm}
+
+\hypersetup{
+    unicode=true,
+    pdfencoding=unicode,
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=blue,
+}
+
+% Superscript citation style
+\let\oldcite\cite
+\renewcommand{\cite}[1]{\textsuperscript{\oldcite{#1}}}
+
+\usepackage[nameinlink]{cleveref}
+\crefname{figure}{Hình}{Hình}
+\crefname{table}{Bảng}{Bảng}
+\crefname{section}{Mục}{Mục}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    language=Python,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{orange},
+    showstringspaces=false
+}
+
+\graphicspath{{images/}{logo/}}
+
+%----------------------------------------------------------------------------------------
+% HEADER AND FOOTER
+%----------------------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+    \raisebox{0.1cm}{\includegraphics[height=0.7cm]{logo/logo_khtn.png}}%
+    \hspace{0.3cm}%
+    \begin{tabular}[b]{@{}l@{}}
+        {\footnotesize\textbf{Trường đại học Khoa Học Tự Nhiên TP.HCM}} \\
+        {\scriptsize \tenkhoa}
+    \end{tabular}
+}
+\fancyhead[C]{}
+\fancyhead[R]{}
+\fancyfoot[L]{\footnotesize \tenmonhoc}
+\fancyfoot[C]{}
+\fancyfoot[R]{\footnotesize Trang \thepage/\pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyhead[L]{%
+        \raisebox{0.1cm}{\includegraphics[height=0.7cm]{logo/logo_khtn.png}}%
+        \hspace{0.3cm}%
+        \begin{tabular}[b]{@{}l@{}}
+            {\footnotesize\textbf{Trường đại học Khoa Học Tự Nhiên TP.HCM}} \\
+            {\scriptsize \tenkhoa}
+        \end{tabular}
+    }
+    \fancyfoot[L]{\footnotesize \tenmonhoc}
+    \fancyfoot[R]{\footnotesize Trang \thepage/\pageref*{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+%----------------------------------------------------------------------------------------
+% DOCUMENT
+%----------------------------------------------------------------------------------------
+\begin{document}
+
+%--- Title Page ---
+\begin{titlepage}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\center
+
+\includegraphics[width=0.2\textwidth]{logo/rsz_3logo-khtn.png}\\[0.5cm]
+\textsc{\LARGE Trường Đại học Khoa Học Tự Nhiên}\\[0.3cm]
+\textsc{\LARGE TP. Hồ Chí Minh}\\[1cm]
+\textsc{\Large \tenkhoa}\\[0.5cm]
+\textsc{\large Môn học: \tenmonhoc}\\[1cm]
+
+\HRule \\[0.4cm]
+{\huge \bfseries \tendetaibaocao}\\[0.4cm]
+\HRule \\[1.5cm]
+
+\begin{minipage}[t]{0.55\textwidth}
+\begin{flushleft} \large
+\emph{Nhóm sinh viên thực hiện:}\\
+\vspace{0.1cm}
+\begin{tabular}{@{}ll@{}}
+\danhsachsinhvien
+\end{tabular}
+\end{flushleft}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+\emph{Giảng viên hướng dẫn:} \\
+\vspace{0.1cm}
+\hovatenGV
+\end{flushright}
+\end{minipage}\\[2cm]
+
+{\large \thangnam}\\[2cm]
+\vfill
+\end{titlepage}
+
+%--- Table of Contents ---
+{\hypersetup{linkcolor=black}
+\tableofcontents
+\newpage
+\addcontentsline{toc}{section}{Danh mục hình ảnh}
+\listoffigures
+\newpage
+\addcontentsline{toc}{section}{Danh mục bảng biểu}
+\listoftables}
+
+%--- Sections ---
+\newpage
+\input{sections/00-abbreviations}
+
+\newpage
+\input{sections/01-introduction}
+
+\newpage
+\input{sections/02-data-collection}
+
+\newpage
+\input{sections/03-data-cleaning}
+
+\newpage
+\input{sections/04-data-quality}
+
+\newpage
+\input{sections/05-data-management}
+
+\newpage
+\input{sections/06-eda}
+
+\newpage
+\input{sections/07-results}
+
+\newpage
+\input{sections/08-conclusion}
+
+%--- References ---
+\newpage
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+\end{document}

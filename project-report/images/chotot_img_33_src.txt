@@ -1,0 +1,34 @@
+Cell Index: 202
+--- Source ---
+# ── RAM vs price by top brands ─────────────────────────────────────────────────
+
+top_brands = df['Hãng'].value_counts().head(6).index
+
+brand_ram = (
+    ram_price[
+        ram_price['Hãng'].isin(top_brands)
+        & ram_price['_ram_gb'].isin([4, 8, 16, 32])
+    ]
+    .groupby(['Hãng', '_ram_gb'])['price_m']
+    .median()
+    .unstack()
+)
+
+display(brand_ram.round(2))
+
+fig, ax = plt.subplots(figsize=(8, 4))
+
+sns.heatmap(
+    brand_ram,
+    annot=True,
+    fmt=".1f",
+    cmap="Blues",
+    ax=ax
+)
+
+ax.set_title("Median price theo Brand và RAM")
+ax.set_xlabel("RAM (GB)")
+ax.set_ylabel("Hãng")
+
+plt.tight_layout()
+plt.show()

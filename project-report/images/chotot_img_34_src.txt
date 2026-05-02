@@ -1,0 +1,31 @@
+Cell Index: 206
+--- Source ---
+# 1. Ép kiểu dữ liệu để đảm bảo khớp với list common_ram
+ram_price['_ram_gb'] = ram_price['_ram_gb'].astype(int)
+
+common_ram = [4, 8, 16, 32]
+
+# 2. Lọc dữ liệu và loại bỏ các dòng trống
+plot_df = ram_price[
+    ram_price['_ram_gb'].isin(common_ram) &
+    ram_price['price_m'].between(1, 100)
+].copy().dropna(subset=['_ram_gb', 'price_m'])
+
+fig, ax = plt.subplots(figsize=(8, 4))
+
+# 3. Vẽ biểu đồ
+sns.boxplot(
+    data=plot_df,
+    x='_ram_gb',
+    y='price_m',
+    order=common_ram, # Đảm bảo common_ram là [4, 8, 16, 32] toàn số nguyên
+    ax=ax
+)
+
+ax.set_title("Giá theo RAM — các mức phổ biến")
+ax.set_xlabel("RAM (GB)")
+ax.set_ylabel("Giá (triệu đồng)")
+ax.spines[['top', 'right']].set_visible(False)
+
+plt.tight_layout()
+plt.show()

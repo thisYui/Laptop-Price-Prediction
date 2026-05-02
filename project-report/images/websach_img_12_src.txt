@@ -1,0 +1,51 @@
+Cell Index: 62
+--- Source ---
+# ── 5.7 Price by CPU brand × RAM tier ───────────────────────────────────────
+
+MIN_CELL_N = 20
+
+tmp = df[
+    df["price_median"].notna()
+    & df["cpu_brand"].notna()
+    & df["ram_tier_clean"].notna()
+    & df["ram_tier_clean"].ne("Unknown")
+].copy()
+
+cpu_ram_price = tmp.pivot_table(
+    index="cpu_brand",
+    columns="ram_tier_clean",
+    values="price_median",
+    aggfunc="median"
+)
+
+cpu_ram_count = tmp.pivot_table(
+    index="cpu_brand",
+    columns="ram_tier_clean",
+    values="price_median",
+    aggfunc="size"
+)
+
+ram_order = ["≤8 GB", "16 GB", "32 GB", ">32 GB", "Other"]
+cpu_ram_price = cpu_ram_price.reindex(columns=ram_order)
+cpu_ram_count = cpu_ram_count.reindex(columns=ram_order)
+
+# Chỉ giữ cell đủ mẫu
+cpu_ram_price_filtered = cpu_ram_price.where(cpu_ram_count >= MIN_CELL_N)
+
+plt.figure(figsize=(9, 4.5))
+sns.heatmap(
+    cpu_ram_price_filtered,
+    annot=True,
+    fmt=".1f",
+    cmap="YlOrRd",
+    linewidths=0.5,
+    cbar_kws={"label": "Median price_median, triệu VND"}
+)
+plt.title(f"CPU Brand × RAM Tier Median Price (n >= {MIN_CELL_N})")
+plt.xlabel("RAM tier")
+plt.ylabel("CPU brand")
+plt.tight_layout()
+plt.show()
+
+print("Cell counts:")
+display(cpu_ram_count.fillna(0).astype(int))

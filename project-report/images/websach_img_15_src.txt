@@ -1,0 +1,11 @@
+Cell Index: 73
+--- Source ---
+# ── 6.3 Price by GPU brand ───────────────────────────────────────────────────
+# FIX: price_median đã là triệu VND → KHÔNG chia 1e6 nữa
+fig, ax = plt.subplots(figsize=(8, 4))
+gpu_price = df.groupby('gpu_brand')['price_median'].median().sort_values()
+gpu_price.plot(kind='barh', ax=ax, color='slateblue')
+ax.set_xlabel('Median Price (Triệu VND)')
+ax.set_title('Median Price theo GPU Brand')
+plt.tight_layout()
+plt.show()

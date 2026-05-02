@@ -1,0 +1,12 @@
+Cell Index: 53
+--- Source ---
+# ── 5.3 CPU × RAM heatmap (count) ────────────────────────────────────────────
+cpu_ram = pd.crosstab(
+    df['cpu_brand'],
+    df['Dung lượng RAM'].astype(str).str.replace(r'\.0$', '', regex=True)
+)
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.heatmap(cpu_ram, annot=True, fmt='d', cmap='Blues', ax=ax, linewidths=0.5)
+ax.set_title('CPU Brand × RAM GB (count)')
+plt.tight_layout()
+plt.show()

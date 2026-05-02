@@ -1,0 +1,13 @@
+Cell Index: 51
+--- Source ---
+fig, ax = plt.subplots(figsize=(6,4))
+
+sample = df_clean.dropna(subset=['_value_simple', '_price']).sample(1500, random_state=42)
+
+ax.scatter(sample['_price']/1e6, sample['_value_simple'], alpha=0.4)
+ax.set_xlabel("Price (Million VND)")
+ax.set_ylabel("Value Score")
+ax.set_title("Value vs Price")
+
+plt.tight_layout()
+plt.show()

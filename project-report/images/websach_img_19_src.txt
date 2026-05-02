@@ -1,0 +1,35 @@
+Cell Index: 92
+--- Source ---
+# ── 7b Correlation numeric specs vs price_median ─────────────────────────────
+num_df = pd.DataFrame({
+    'price_median':  df['price_median'],
+    'screen_inch':   pd.to_numeric(df['Kích thước (inch)'],       errors='coerce'),
+    'ram_gb':        pd.to_numeric(df['Dung lượng RAM'],           errors='coerce'),
+    'storage_gb':    pd.to_numeric(df['Dung lượng ổ cứng (GB)'], errors='coerce'),
+    'gpu_is_nvidia': (df['gpu_brand'] == 'NVIDIA').astype(int),
+    'cpu_is_intel':  (df['cpu_brand'] == 'Intel').astype(int),
+    'cpu_is_amd':    (df['cpu_brand'] == 'AMD').astype(int),
+})
+
+corr = num_df.corr(numeric_only=True)
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+
+mask = np.triu(np.ones_like(corr, dtype=bool))
+sns.heatmap(corr, mask=mask, annot=True, fmt='.2f', cmap='coolwarm',
+            ax=axes[0], vmin=-1, vmax=1, linewidths=0.5,
+            cbar_kws={'shrink': 0.8})
+axes[0].set_title('Correlation Matrix (numeric specs)')
+
+price_corr  = corr['price_median'].drop('price_median').sort_values()
+colors_bar  = ['#e63946' if v < 0 else '#2a9d8f' for v in price_corr]
+axes[1].barh(price_corr.index, price_corr.values, color=colors_bar)
+axes[1].axvline(0, color='black', linewidth=0.8)
+axes[1].set_title('Correlation vs price_median')
+axes[1].set_xlabel('Pearson r')
+
+plt.tight_layout()
+plt.show()
+
+print("Correlation với price_median (|r| giảm dần):")
+display(price_corr.abs().sort_values(ascending=False).round(3).to_frame('|r|'))

@@ -1,0 +1,85 @@
+\section{Phương pháp và nguồn thu thập dữ liệu}
+\label{sec:data-collection}
+
+\subsection{Tổng quan nguồn dữ liệu}
+
+Dữ liệu được thu thập từ hai nguồn trực tuyến phổ biến tại Việt Nam, mỗi nguồn đại diện cho một phân khúc thị trường khác nhau. \cref{tab:data-sources} tóm tắt đặc điểm của hai nguồn.
+
+\begin{table}[H]
+    \centering
+    \caption{So sánh hai nguồn dữ liệu}
+    \label{tab:data-sources}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Đặc điểm} & \textbf{Chợ Tốt} & \textbf{Websosanh} \\
+        \midrule
+        Loại sản phẩm     & Second-hand       & Laptop mới \\
+        Số lượng bản ghi   & 5.866             & 4.384 \\
+        Số cột             & 15                & 15 \\
+        Phương pháp        & Web scraping (HTML) & API + HTML parsing \\
+        Đặc điểm dữ liệu  & User-generated, noisy & Structured catalog \\
+        Nguồn giá          & Giá đăng bán      & 3 shop price slots \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Nguồn 1: Chợ Tốt}
+\label{subsec:chotot-collection}
+
+\textbf{Chợ Tốt} (\texttt{chotot.com}) là nền tảng marketplace cho phép người dùng đăng tin bán laptop đã qua sử dụng. Dữ liệu được thu thập qua web scraping\cite{mitchell2018scraping} sử dụng thư viện \texttt{requests}\cite{reitz2011requests} và \texttt{BeautifulSoup}\cite{richardson2007bs4}.
+
+\subsubsection{Quy trình thu thập}
+
+Quy trình gồm hai giai đoạn:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Trích xuất URL}: Duyệt 300 trang danh mục (category \texttt{cg=8020}), mỗi trang chứa 20 tin đăng. Các URL sản phẩm được trích xuất từ thẻ \texttt{<a>} có class \texttt{cwv3xk0}.
+    \item \textbf{Trích xuất chi tiết}: Với mỗi URL, truy cập trang sản phẩm và parse thông tin từ DOM (thẻ \texttt{<div class="p74axq8">} chứa các cặp nhãn--giá trị). Nếu DOM không trả về đủ dữ liệu, fallback sang JSON embedded trong thẻ \texttt{<script id="\_\_NEXT\_DATA\_\_">}.
+\end{enumerate}
+
+Mỗi bản ghi gồm: giá, tiêu đề, hãng, dòng máy, tình trạng, chính sách bảo hành, kích cỡ màn hình, bộ vi xử lý, RAM, card màn hình, ổ cứng, loại ổ cứng, xuất xứ, và thông tin sử dụng. Delay giữa các request là 0.1 giây để tránh bị chặn.
+
+\subsubsection{Công cụ sử dụng}
+
+\begin{itemize}[noitemsep]
+    \item \texttt{requests} 2.31.0 --- gửi HTTP request
+    \item \texttt{beautifulsoup4} 4.14.3 --- parse HTML
+    \item Cấu hình lưu tại \texttt{config/chotot\_collection.yml}
+\end{itemize}
+
+\subsection{Nguồn 2: Websosanh}
+\label{subsec:websosanh-collection}
+
+\textbf{Websosanh} (\texttt{websosanh.vn}) là nền tảng so sánh giá, tổng hợp thông tin laptop mới từ nhiều cửa hàng trực tuyến. Dữ liệu được thu thập qua API kết hợp HTML parsing.
+
+\subsubsection{Quy trình thu thập}
+
+Quy trình gồm ba giai đoạn, được quản lý bởi lớp \texttt{DataCollectionPipeline}:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Trích xuất URL}: Gửi POST request đến endpoint \texttt{search-api/get-search-product} với payload chứa \texttt{categoryIds=[18]} (laptop). Crawl theo từng brand sử dụng mapping từ \texttt{brand\_mapping.json} (12 hãng: HP, Asus, Lenovo, Acer, Dell, Apple, MSI, Samsung, Sony, Fujitsu, Toshiba, và nhóm ``khác'').
+    \item \textbf{Trích xuất thông số}: Với mỗi URL sản phẩm, tải trang HTML và parse bảng \texttt{<table class="table-specifications">} để lấy thông số kỹ thuật.
+    \item \textbf{Trích xuất giá}: Gọi API \texttt{compare-api/get-compare-normal-merchant} với \texttt{rootProductId} để lấy giá từ tối đa 3 cửa hàng, gồm tên shop, giá, và link sản phẩm tại shop đó.
+\end{enumerate}
+
+Dữ liệu được lưu theo chunk (100 bản ghi/lần) để tránh mất dữ liệu khi gặp lỗi. Delay giữa các request là 0.7 giây.
+
+\subsubsection{Công cụ sử dụng}
+
+\begin{itemize}[noitemsep]
+    \item \texttt{requests} 2.31.0 --- gửi HTTP request (GET và POST)
+    \item \texttt{beautifulsoup4} 4.14.3 --- parse HTML spec table
+    \item \texttt{pandas}\cite{mckinney2010pandas} 2.2.2 --- lưu trữ và xử lý DataFrame
+    \item Cấu hình lưu tại \texttt{config/websosanh\_collection.yml}
+\end{itemize}
+
+\subsection{Định dạng lưu trữ}
+
+Cả hai nguồn đều lưu trữ dưới dạng CSV:
+\begin{itemize}[noitemsep]
+    \item \texttt{data/raw/chotot\_laptop\_data.csv} --- 5.866 dòng, 1.54 MB
+    \item \texttt{data/raw/laptop\_features.csv} --- raw Websosanh, 3.69 MB
+    \item \texttt{data/raw/clean\_laptop\_features.csv} --- Websosanh sau cleaning, 575 KB
+\end{itemize}
+
+

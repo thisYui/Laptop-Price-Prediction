@@ -1,0 +1,30 @@
+Cell Index: 237
+--- Source ---
+# ── Giá theo storage + loại ─────────────────────────────────────────────────────
+fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+
+# Giá theo GB
+price_storage = (df[df['_price'].between(1e6, 100e6) & df['_storage_gb'].notna()]
+                 .assign(price_mil=lambda x: x['_price']/1e6))
+gb_order = sorted(price_storage['_storage_gb'].unique())
+sns.boxplot(data=price_storage, x='_storage_gb', y='price_mil',
+            order=gb_order, palette='Greens', ax=axes[0])
+axes[0].set_title("Giá theo dung lượng ổ cứng")
+axes[0].set_xlabel("GB")
+axes[0].set_ylabel("Triệu đồng")
+
+# Giá theo loại ổ cứng
+price_ssd = (df[df['_price'].between(1e6, 100e6) & df['Loại ổ cứng'].notna()]
+             .assign(price_mil=lambda x: x['_price']/1e6))
+ssd_order = (price_ssd.groupby('Loại ổ cứng')['price_mil']
+             .median().sort_values(ascending=False).index.tolist())
+sns.boxplot(data=price_ssd, x='Loại ổ cứng', y='price_mil',
+            order=ssd_order, palette='muted', ax=axes[1])
+axes[1].set_title("Giá theo Loại ổ cứng")
+axes[1].set_xlabel("")
+axes[1].set_xticklabels(axes[1].get_xticklabels(), rotation=30, ha='right')
+axes[1].set_ylabel("Triệu đồng")
+
+for ax in axes: ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

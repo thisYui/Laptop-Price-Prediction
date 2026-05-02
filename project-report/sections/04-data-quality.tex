@@ -1,0 +1,78 @@
+\section{Đảm bảo chất lượng dữ liệu}
+\label{sec:data-quality}
+
+\subsection{Tổng quan chất lượng}
+
+Sau quá trình thu thập và làm sạch, chất lượng dữ liệu được đánh giá theo bốn tiêu chí: tính đầy đủ (completeness), tính nhất quán (consistency), tính chính xác (accuracy), và tính kịp thời (timeliness).
+
+\begin{table}[H]
+    \centering
+    \caption{Đánh giá chất lượng dữ liệu theo nguồn}
+    \label{tab:data-quality}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Tiêu chí} & \textbf{Chợ Tốt} & \textbf{Websosanh} \\
+        \midrule
+        Completeness (trung bình) & $\sim$85\% & $\sim$93\% \\
+        Consistency (brand--title) & $\sim$95\% & $\sim$98\% \\
+        Accuracy (giá hợp lệ) & $>$99\% & $>$95\% (sau lọc outlier) \\
+        Timeliness & Q1 2025 & Q1 2025 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Xử lý outlier}
+
+\subsubsection{Outlier giá --- Chợ Tốt}
+Giá đăng bán có range từ 100.000 VND đến trên 150 triệu VND. Các giá cực thấp ($<$ 1 triệu) thường là phụ kiện hoặc linh kiện bị gắn nhầm category. Giá cực cao ($>$ 100 triệu) phần lớn hợp lệ (Apple MacBook Pro cấu hình cao). Nhóm nghiên cứu áp dụng domain filter: giữ lại giá trong khoảng 1--150 triệu VND.
+
+\subsubsection{Outlier giá --- Websosanh}
+Dữ liệu chứa các giá bất thường (ví dụ 268 triệu, 860 triệu, 1.629 triệu, 2.750 triệu VND) do lỗi crawl hoặc parse. Quy trình lọc gồm hai bước:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Domain filter}: Null-out giá $<$ 3 triệu hoặc $>$ 200 triệu.
+    \item \textbf{Relative filter}: Dùng median giá của từng dòng làm anchor; null-out giá lệch $>$ 2$\times$ hoặc $<$ 0.5$\times$ so với row median.
+\end{enumerate}
+
+Sau cleaning, mỗi sản phẩm Websosanh trung bình còn $\sim$2.99 nguồn giá sạch.
+
+\subsubsection{Outlier thuộc tính}
+\begin{itemize}[noitemsep]
+    \item \textbf{Kích thước màn hình}: Giá trị $>$ 25 inch được null-out (không phù hợp laptop).
+    \item \textbf{RAM}: Giá trị 512 hoặc 5.600 GB là lỗi parse (nhầm tốc độ RAM với dung lượng); null-out giá trị $>$ 256 GB.
+    \item \textbf{Storage}: Giá trị 6.144 GB ($\approx$ 6TB) kiểm tra thủ công --- một số là cấu hình thật (cộng gộp nhiều ổ).
+\end{itemize}
+
+\subsection{Tạo biến phái sinh (Feature Engineering)}
+
+Để giảm phân mảnh (fragmentation) và sparse features, các biến categorical được gom nhóm:
+
+\begin{table}[H]
+    \centering
+    \caption{Các biến phái sinh chính}
+    \label{tab:derived-features}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Biến gốc} & \textbf{Biến mới} & \textbf{Nhóm} \\
+        \midrule
+        Kích thước (inch)  & \texttt{screen\_size\_group} & $<$13, 13--13.9, 14--14.9, 15--15.9, 16--16.9, $\geq$17 \\
+        Dung lượng RAM     & \texttt{ram\_tier\_clean}    & $\leq$8GB, 16GB, 32GB, $>$32GB \\
+        Dung lượng ổ cứng  & \texttt{storage\_tier\_clean} & $\leq$256GB, 512GB, 1TB, 2TB, $>$2TB \\
+        GPU model          & \texttt{gpu\_tier\_v2}       & Intel Integrated, AMD Radeon, GTX, RTX 4000, RTX 5000, Apple, Other \\
+        Loại CPU           & \texttt{cpu\_tier}           & Low-end, Mid-range, High-end, Unknown \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Chất lượng biến Unknown}
+
+Sau toàn bộ quá trình cleaning, tỷ lệ Unknown còn lại ở Websosanh:
+\begin{itemize}[noitemsep]
+    \item \texttt{ram\_type\_clean}: 7.44\%
+    \item \texttt{cpu\_tier}: 6.93\% (304 dòng)
+    \item \texttt{storage\_tier\_clean}: 5.13\%
+    \item \texttt{storage\_type\_clean}: 5.06\%
+    \item \texttt{gpu\_tier\_v2}: 4.72\% (207 dòng)
+    \item \texttt{brand\_clean}: 4.11\%
+\end{itemize}
+
+Các nhóm Unknown được giữ lại như một category riêng thay vì xóa dòng, nhằm tránh mất mẫu và bias.

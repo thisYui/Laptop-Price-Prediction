@@ -1,0 +1,40 @@
+Cell Index: 44
+--- Source ---
+# ── 4.5 Price by screen size group ──────────────────────────────────────────
+
+screen_price = (
+    df.dropna(subset=["price_median"])
+    .groupby("screen_size_group")
+    .agg(
+        n=("price_median", "size"),
+        mean_price=("price_median", "mean"),
+        median_price=("price_median", "median"),
+        q25_price=("price_median", lambda x: x.quantile(0.25)),
+        q75_price=("price_median", lambda x: x.quantile(0.75)),
+        min_price=("price_median", "min"),
+        max_price=("price_median", "max"),
+    )
+    .reset_index()
+)
+
+screen_order = ["<13in", "13-13.9in", "14-14.9in", "15-15.9in", "16-16.9in", ">=17in", "Unknown"]
+screen_price["screen_size_group"] = pd.Categorical(
+    screen_price["screen_size_group"],
+    categories=screen_order,
+    ordered=True
+)
+
+screen_price = screen_price.sort_values("screen_size_group")
+price_cols = ["mean_price", "median_price", "q25_price", "q75_price", "min_price", "max_price"]
+screen_price[price_cols] = screen_price[price_cols].round(2)
+
+display(screen_price)
+
+plt.figure(figsize=(8, 4))
+plt.bar(screen_price["screen_size_group"].astype(str), screen_price["median_price"])
+plt.title("Median Reference Price by Screen Size Group")
+plt.xlabel("Screen size group")
+plt.ylabel("Median price_median, triệu VND")
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()

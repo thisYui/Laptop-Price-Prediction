@@ -1,0 +1,16 @@
+Cell Index: 37
+--- Source ---
+# ── Boxplot phân phối giá theo top-10 brand ────────────────────────────────────
+top10_brands = df['Hãng'].value_counts().head(10).index
+plot_brand = (df[df['Hãng'].isin(top10_brands) & df['_price'].between(1e6, 100e6)]
+              .assign(price_mil=lambda x: x['_price']/1e6))
+brand_order = plot_brand.groupby('Hãng')['price_mil'].median().sort_values(ascending=False).index
+
+fig, ax = plt.subplots(figsize=(13, 5))
+sns.boxplot(data=plot_brand, x='Hãng', y='price_mil', order=brand_order, palette='muted', ax=ax)
+ax.set_title("Phân phối giá theo Brand (top 10, lọc 1–100M)")
+ax.set_ylabel("Triệu đồng")
+ax.set_xlabel("")
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

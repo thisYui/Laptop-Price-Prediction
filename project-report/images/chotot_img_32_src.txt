@@ -1,0 +1,40 @@
+Cell Index: 196
+--- Source ---
+# ── Median price trend for reliable RAM groups only ────────────────────────────
+
+reliable_ram = ram_summary[ram_summary['n'] >= 30].copy()
+
+fig, ax = plt.subplots(figsize=(8, 4))
+
+ax.plot(
+    reliable_ram['_ram_gb'],
+    reliable_ram['median_price'],
+    marker='o',
+    linewidth=2
+)
+
+ax.fill_between(
+    reliable_ram['_ram_gb'],
+    reliable_ram['q1'],
+    reliable_ram['q3'],
+    alpha=0.2,
+    label='IQR'
+)
+
+for _, row in reliable_ram.iterrows():
+    ax.text(
+        row['_ram_gb'],
+        row['median_price'] + 0.5,
+        f"n={int(row['n'])}",
+        ha='center',
+        fontsize=9
+    )
+
+ax.set_title("Median giá theo RAM — chỉ nhóm đủ mẫu")
+ax.set_xlabel("RAM (GB)")
+ax.set_ylabel("Giá median (triệu đồng)")
+ax.legend()
+ax.spines[['top', 'right']].set_visible(False)
+
+plt.tight_layout()
+plt.show()

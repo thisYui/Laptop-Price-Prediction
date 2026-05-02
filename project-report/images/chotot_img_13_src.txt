@@ -1,0 +1,16 @@
+Cell Index: 56
+--- Source ---
+# ── Phân phối độ dài title ─────────────────────────────────────────────────────
+title_len = df['title'].str.len()
+print(title_len.describe().round(1).rename("Độ dài title (ký tự)").to_string())
+
+fig, ax = plt.subplots(figsize=(10, 3))
+ax.hist(title_len.dropna(), bins=80, color=ACCENT, edgecolor='white')
+ax.axvline(title_len.median(), color='red', linestyle='--',
+           label=f'Median: {title_len.median():.0f} ký tự')
+ax.set_title("Phân phối độ dài title")
+ax.set_xlabel("Số ký tự")
+ax.legend()
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

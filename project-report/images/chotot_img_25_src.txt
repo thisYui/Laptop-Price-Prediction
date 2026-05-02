@@ -1,0 +1,33 @@
+Cell Index: 151
+--- Source ---
+# ── Extract midpoint ────────────────────────────────────────────────────────────
+def screen_midpoint(val):
+    if pd.isna(val): return np.nan
+    nums = re.findall(r'[\d\.]+', str(val))
+    if len(nums) >= 2: return (float(nums[0]) + float(nums[1])) / 2
+    elif len(nums) == 1: return float(nums[0])
+    return np.nan
+
+df['screen_mid'] = df['Kích cỡ màn hình'].apply(screen_midpoint)
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 4))
+
+# Phân phối inch
+vc_inch = df['screen_mid'].value_counts().sort_index()
+axes[0].bar(vc_inch.index.astype(str), vc_inch.values, color=ACCENT, edgecolor='white')
+axes[0].set_title("Phân phối kích cỡ màn hình (inch midpoint)")
+axes[0].set_xlabel("Inch")
+axes[0].set_ylabel("Số listing")
+axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=45, ha='right')
+
+# Missing rate theo hãng
+miss_screen = (df.groupby('Hãng')['Kích cỡ màn hình']
+               .apply(lambda x: x.isna().mean()*100)
+               .sort_values(ascending=False).head(12).sort_values())
+miss_screen.plot(kind='barh', ax=axes[1], color=COLORS[3])
+axes[1].set_title("Missing rate màn hình theo Hãng (top 12)")
+axes[1].set_xlabel("Missing %")
+
+for ax in axes: ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

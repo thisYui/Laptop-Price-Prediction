@@ -1,0 +1,14 @@
+Cell Index: 106
+--- Source ---
+# Plot median price của các Dòng máy phổ biến
+
+plot_df = model_price_summary.sort_values("median_price_m").tail(25)
+
+fig, ax = plt.subplots(figsize=(10, 7))
+ax.barh(plot_df[model_col], plot_df["median_price_m"], color=ACCENT)
+ax.set_title(f"Median price theo Dòng máy phổ biến (count >= {MIN_COUNT_MODEL})")
+ax.set_xlabel("Median price (triệu đồng)")
+ax.set_ylabel("Dòng máy")
+ax.spines[["top", "right"]].set_visible(False)
+plt.tight_layout()
+plt.show()

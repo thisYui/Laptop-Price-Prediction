@@ -1,0 +1,60 @@
+Cell Index: 46
+--- Source ---
+# ── 4.6 Brand × screen size median price heatmap ────────────────────────────
+
+MIN_CELL_N = 10
+
+top_brands = (
+    df["brand_clean"]
+    .value_counts()
+    .head(10)
+    .index
+)
+
+tmp = df[
+    df["brand_clean"].isin(top_brands)
+    & df["screen_size_group"].ne("Unknown")
+    & df["price_median"].notna()
+].copy()
+
+brand_screen_median = tmp.pivot_table(
+    index="brand_clean",
+    columns="screen_size_group",
+    values="price_median",
+    aggfunc="median"
+)
+
+brand_screen_count = tmp.pivot_table(
+    index="brand_clean",
+    columns="screen_size_group",
+    values="price_median",
+    aggfunc="size"
+)
+
+# Chỉ giữ các ô có đủ mẫu
+brand_screen_median = brand_screen_median.where(brand_screen_count >= MIN_CELL_N)
+
+brand_screen_median = brand_screen_median.reindex(columns=screen_order[:-1])
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(
+    brand_screen_median,
+    annot=True,
+    fmt=".1f",
+    cmap="YlOrRd",
+    linewidths=0.5,
+    cbar_kws={"label": "Median price_median, triệu VND"}
+)
+plt.title(f"Brand × Screen Size Median Price (n >= {MIN_CELL_N})")
+plt.xlabel("Screen size group")
+plt.ylabel("Brand")
+plt.tight_layout()
+plt.show()
+
+print("Cell counts used for filtering:")
+display(
+    brand_screen_count
+    .reindex(columns=screen_order[:-1])
+    .fillna(0)
+    .astype(int)
+)

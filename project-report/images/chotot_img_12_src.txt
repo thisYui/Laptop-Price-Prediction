@@ -1,0 +1,42 @@
+Cell Index: 53
+--- Source ---
+# ===== Pareto frontier (fixed RAM levels) =====
+
+ram_levels = [2, 4, 6, 8, 16, 32, 48, 64]
+
+# 1. Filter dữ liệu hợp lệ
+df_pf = df_clean.dropna(subset=['_ram_gb', '_price']).copy()
+
+# 2. Giữ các RAM gần nhất trong levels
+df_pf = df_pf[df_pf['_ram_gb'].isin(ram_levels)]
+
+# 3. Với mỗi RAM, lấy laptop rẻ nhất (best price)
+pareto_df = (
+    df_pf.groupby('_ram_gb')
+    .apply(lambda x: x.loc[x['_price'].idxmin()])
+    .reset_index(drop=True)
+)
+
+# 4. Sort theo price để vẽ đường frontier
+pareto_df = pareto_df.sort_values('_price')
+
+# ===== Plot =====
+plt.figure(figsize=(6,4))
+
+plt.scatter(df_pf['_price']/1e6, df_pf['_ram_gb'], alpha=0.2)
+
+plt.plot(
+    pareto_df['_price']/1e6,
+    pareto_df['_ram_gb'],
+    marker='o',
+    color='red'
+)
+
+plt.xlabel("Price (Million VND)")
+plt.ylabel("RAM (GB)")
+plt.title("Pareto Frontier (RAM vs Price)")
+
+plt.yticks(ram_levels)
+
+plt.tight_layout()
+plt.show()

@@ -1,0 +1,27 @@
+Cell Index: 218
+--- Source ---
+# ── Missing GPU có hệ thống theo Hãng? ──────────────────────────────────────────
+gpu_miss_rate = (df.assign(gpu_missing=df['Card màn hình'].isna())
+                 .groupby('Hãng')['gpu_missing']
+                 .mean()
+                 .sort_values(ascending=False)
+                 .head(15) * 100)
+
+fig, ax = plt.subplots(figsize=(10, 5))
+gpu_miss_rate.sort_values().plot(kind='barh', ax=ax, color=COLORS[5])
+ax.set_title("Missing rate GPU theo Hãng (top 15)")
+ax.set_xlabel("Missing %")
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()
+
+# Gaming laptop mà thiếu GPU?
+gaming_pat = r'(ROG|TUF|Gaming|Legion|Predator|Nitro|Katana|Raider|Titan)'
+is_gaming = (df['title'].str.contains(gaming_pat, case=False, na=False) |
+             df['Dòng máy'].str.contains(gaming_pat, case=False, na=False))
+gaming_no_gpu = is_gaming & df['Card màn hình'].isna()
+print(f"\nLaptop gaming (title/dòng máy) mà thiếu GPU: {gaming_no_gpu.sum()}")
+if gaming_no_gpu.sum() > 0:
+    display(df[gaming_no_gpu][['title', 'Dòng máy', 'Card màn hình', 'price']].head(8))
+
+df.drop(columns='gpu_tier', inplace=True, errors='ignore')

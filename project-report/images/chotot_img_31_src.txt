@@ -1,0 +1,47 @@
+Cell Index: 192
+--- Source ---
+# ── Price by RAM summary ────────────────────────────────────────────────────
+
+price_ram = df[
+    df['_price'].between(1e6, 100e6) &
+    df['_ram_gb'].notna()
+].copy()
+
+price_ram['price_mil'] = price_ram['_price'] / 1e6
+
+ram_price_summary = (
+    price_ram
+    .groupby('_ram_gb')
+    .agg(
+        n=('price_mil', 'size'),
+        mean_price=('price_mil', 'mean'),
+        median_price=('price_mil', 'median'),
+        q1=('price_mil', lambda x: x.quantile(0.25)),
+        q3=('price_mil', lambda x: x.quantile(0.75)),
+        min_price=('price_mil', 'min'),
+        max_price=('price_mil', 'max')
+    )
+    .reset_index()
+)
+
+for col in ['mean_price', 'median_price', 'q1', 'q3', 'min_price', 'max_price']:
+    ram_price_summary[col] = ram_price_summary[col].round(2)
+
+display(ram_price_summary.sort_values('_ram_gb'))
+
+# Plot median price by RAM
+plt.figure(figsize=(10, 4))
+
+plt.plot(
+    ram_price_summary['_ram_gb'],
+    ram_price_summary['median_price'],
+    marker='o'
+)
+
+plt.title('Median giá theo RAM')
+plt.xlabel('RAM (GB)')
+plt.ylabel('Median giá, triệu đồng')
+plt.grid(axis='y', alpha=0.3)
+plt.gca().spines[['top', 'right']].set_visible(False)
+plt.tight_layout()
+plt.show()

@@ -1,0 +1,34 @@
+\section{Kết luận}
+\label{sec:conclusion}
+
+\subsection{Tổng kết}
+
+Báo cáo này trình bày toàn bộ quy trình xây dựng bộ dữ liệu cho bài toán dự đoán giá laptop tại thị trường Việt Nam. Dữ liệu được thu thập từ hai nguồn bổ sung nhau: Chợ Tốt (5.866 listing second-hand) và Websosanh (4.384 sản phẩm mới), mỗi nguồn mang đặc trưng riêng về chất lượng và tính chất dữ liệu.
+
+Các phát hiện chính:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Chất lượng dữ liệu}: Dữ liệu user-generated (Chợ Tốt) có tỷ lệ missing cao hơn đáng kể so với dữ liệu catalog (Websosanh), đặc biệt ở các cột GPU (24\% vs 4.7\%) và kích thước màn hình (18\% vs 2.2\%). Missing values tuân theo mô hình MNAR --- thiếu có hệ thống theo brand và phân khúc giá.
+    \item \textbf{Feature engineering}: Việc gom nhóm các biến categorical (CPU tier, RAM tier, GPU tier, storage tier, screen size group) giúp giảm phân mảnh và tạo tín hiệu giá rõ ràng hơn so với dùng giá trị raw.
+    \item \textbf{Confounding}: Các feature cấu hình có tương quan mạnh với nhau (RAM cao $\leftrightarrow$ CPU mạnh $\leftrightarrow$ GPU rời $\leftrightarrow$ brand cao cấp), do đó feature importance cần diễn giải cẩn thận --- không phải quan hệ nhân quả.
+    \item \textbf{Baseline model}: Random Forest trên Websosanh đạt $R^2 = 0.746$, MAE $\approx$ 5.51 triệu VND, xác nhận dữ liệu có khả năng dự đoán giá ở mức chấp nhận được.
+\end{enumerate}
+
+\subsection{Hạn chế}
+
+\begin{itemize}[noitemsep]
+    \item Hai nguồn dữ liệu chưa được tích hợp (merge) thành một tập thống nhất do khác biệt về schema và ngữ nghĩa.
+    \item Baseline model chưa qua cross-validation và hyperparameter tuning.
+    \item Tỷ lệ Unknown ở một số biến categorical vẫn còn cao ($>$5\%), có thể ảnh hưởng đến hiệu năng model.
+    \item Dữ liệu thu thập tại một thời điểm; giá laptop thay đổi nhanh theo thời gian.
+\end{itemize}
+
+\subsection{Hướng phát triển}
+
+\begin{enumerate}[noitemsep]
+    \item Tích hợp hai nguồn dữ liệu theo schema chung đã thiết kế (\cref{sec:data-collection}).
+    \item So sánh nhiều mô hình (XGBoost, LightGBM, CatBoost, Linear Regression) với cross-validation.
+    \item Phân tích feature importance và SHAP values để giải thích mô hình.
+    \item Đánh giá lỗi dự đoán theo từng phân khúc giá (low, mid, high, premium).
+    \item Xây dựng pipeline tự động cập nhật dữ liệu định kỳ.
+\end{enumerate}

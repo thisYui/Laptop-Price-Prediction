@@ -1,0 +1,26 @@
+Cell Index: 248
+--- Source ---
+# ── Xuất xứ ─────────────────────────────────────────────────────────────────────
+xuat_xu_vc = df['Xuất xứ'].value_counts(dropna=False)
+display(xuat_xu_vc.to_frame())
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+
+xuat_xu_vc.sort_values().plot(kind='barh', ax=axes[0], color=ACCENT)
+axes[0].set_title("Phân phối Xuất xứ")
+axes[0].set_xlabel("Số listing")
+
+# Giá theo xuất xứ
+price_xx = (df[df['_price'].between(1e6, 100e6) & df['Xuất xứ'].notna()]
+            .assign(price_mil=lambda x: x['_price']/1e6))
+xx_order = (price_xx.groupby('Xuất xứ')['price_mil']
+            .median().sort_values(ascending=False).index.tolist())
+sns.boxplot(data=price_xx, x='Xuất xứ', y='price_mil',
+            order=xx_order, palette='muted', ax=axes[1])
+axes[1].set_title("Giá theo Xuất xứ")
+axes[1].set_xticklabels(axes[1].get_xticklabels(), rotation=30, ha='right')
+axes[1].set_ylabel("Triệu đồng")
+
+for ax in axes: ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

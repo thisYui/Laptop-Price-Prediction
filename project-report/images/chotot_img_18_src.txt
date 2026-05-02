@@ -1,0 +1,30 @@
+Cell Index: 98
+--- Source ---
+# Long-tail distribution: nhiều Dòng máy có rất ít listing hay không?
+
+count_bucket = pd.cut(
+    model_counts,
+    bins=[0, 1, 2, 5, 10, 20, 50, 100, np.inf],
+    labels=["1", "2", "3-5", "6-10", "11-20", "21-50", "51-100", ">100"]
+)
+
+bucket_summary = (
+    pd.DataFrame({
+        "count_bucket": count_bucket,
+        "num_models": 1
+    })
+    .groupby("count_bucket", observed=False)
+    .sum()
+    .reset_index()
+)
+
+display(bucket_summary)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.bar(bucket_summary["count_bucket"].astype(str), bucket_summary["num_models"], color=ACCENT)
+ax.set_title("Số lượng Dòng máy theo tần suất xuất hiện")
+ax.set_xlabel("Số listing / Dòng máy")
+ax.set_ylabel("Số Dòng máy")
+ax.spines[["top", "right"]].set_visible(False)
+plt.tight_layout()
+plt.show()

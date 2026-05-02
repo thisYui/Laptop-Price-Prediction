@@ -1,0 +1,60 @@
+Cell Index: 80
+--- Source ---
+# ── 6.5 Price by storage type and storage tier ──────────────────────────────
+
+def price_summary_by_col(col, min_n=20):
+    out = (
+        df.dropna(subset=["price_median"])
+        .groupby(col)
+        .agg(
+            n=("price_median", "size"),
+            mean_price=("price_median", "mean"),
+            median_price=("price_median", "median"),
+            q25_price=("price_median", lambda x: x.quantile(0.25)),
+            q75_price=("price_median", lambda x: x.quantile(0.75)),
+            min_price=("price_median", "min"),
+            max_price=("price_median", "max"),
+        )
+        .reset_index()
+    )
+
+    price_cols = [
+        "mean_price",
+        "median_price",
+        "q25_price",
+        "q75_price",
+        "min_price",
+        "max_price",
+    ]
+
+    out[price_cols] = out[price_cols].round(2)
+
+    return (
+        out.query("n >= @min_n")
+        .sort_values("median_price", ascending=False)
+        .reset_index(drop=True)
+    )
+
+print("Price by storage type:")
+display(price_summary_by_col("storage_type_clean", min_n=20))
+
+print("Price by storage tier:")
+display(price_summary_by_col("storage_tier_clean", min_n=20))
+
+storage_order = ["≤256GB", "512GB", "1TB", "2TB", ">2TB", "Unknown"]
+
+storage_price_plot = (
+    df.dropna(subset=["price_median"])
+    .groupby("storage_tier_clean")["price_median"]
+    .median()
+    .reindex(storage_order)
+)
+
+plt.figure(figsize=(8, 4))
+plt.bar(storage_price_plot.index.astype(str), storage_price_plot.values)
+plt.title("Median Reference Price by Storage Tier")
+plt.xlabel("Storage tier")
+plt.ylabel("Median price_median, triệu VND")
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()

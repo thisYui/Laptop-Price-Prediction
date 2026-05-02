@@ -1,0 +1,17 @@
+Cell Index: 20
+--- Source ---
+# ── Bar chart missing % ────────────────────────────────────────────────────────
+fig, ax = plt.subplots(figsize=(10, 4))
+cols  = miss_df.index.tolist()
+vals  = miss_df['Missing %'].values
+bars  = ax.barh(cols[::-1], vals[::-1], color=ACCENT, edgecolor='white')
+
+for bar, v in zip(bars, vals[::-1]):
+    ax.text(v + 0.3, bar.get_y() + bar.get_height()/2,
+            f"{v:.1f}%", va='center', fontsize=10)
+
+ax.set_xlabel("Missing (%)")
+ax.set_title("Tỷ lệ Missing theo cột")
+ax.set_xlim(0, max(vals) * 1.25)
+plt.tight_layout()
+plt.show()

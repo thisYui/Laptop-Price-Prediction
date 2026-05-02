@@ -1,0 +1,28 @@
+Cell Index: 123
+--- Source ---
+# ── Boxplot giá theo Tình trạng ─────────────────────────────────────────────────
+plot_df = df[df['_price'].between(1e6, 100e6)].copy()
+plot_df['price_mil'] = plot_df['_price'] / 1e6
+
+order = (plot_df.groupby('Tình trạng')['price_mil']
+         .median().sort_values(ascending=False).index.tolist())
+
+fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+
+# Boxplot
+sns.boxplot(data=plot_df, x='Tình trạng', y='price_mil',
+            order=order, palette='muted', ax=axes[0])
+axes[0].set_title("Phân phối giá theo Tình trạng (1–100M)")
+axes[0].set_ylabel("Triệu đồng")
+axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=30, ha='right')
+
+# Violin — thấy rõ multimodal
+sns.violinplot(data=plot_df, x='Tình trạng', y='price_mil',
+               order=order, palette='muted', inner='box', ax=axes[1])
+axes[1].set_title("Violin — hình dạng phân phối giá")
+axes[1].set_ylabel("Triệu đồng")
+axes[1].set_xticklabels(axes[1].get_xticklabels(), rotation=30, ha='right')
+
+for ax in axes: ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

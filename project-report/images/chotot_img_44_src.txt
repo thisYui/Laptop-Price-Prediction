@@ -1,0 +1,56 @@
+Cell Index: 243
+--- Source ---
+# ── Storage completeness status ───────────────────────────────────────────────
+
+storage_type_col = 'Loại ổ cứng'
+storage_size_col = 'Ổ cứng'
+
+storage_status = np.select(
+    [
+        df[storage_type_col].notna() & df[storage_size_col].notna(),
+        df[storage_type_col].notna() & df[storage_size_col].isna(),
+        df[storage_type_col].isna() & df[storage_size_col].notna(),
+        df[storage_type_col].isna() & df[storage_size_col].isna(),
+    ],
+    [
+        'Có cả Loại & Dung lượng',
+        'Chỉ có Loại',
+        'Chỉ có Dung lượng',
+        'Thiếu cả hai'
+    ],
+    default='Unknown'
+)
+
+storage_status_df = df.copy()
+storage_status_df['_storage_status'] = storage_status
+storage_status_df['price_m'] = storage_status_df['_price'] / 1e6
+
+storage_status_summary = (
+    storage_status_df
+    .groupby('_storage_status')
+    .agg(
+        n=('title', 'count'),
+        pct=('title', lambda s: len(s) / len(df) * 100),
+        median_price=('price_m', 'median'),
+        mean_price=('price_m', 'mean')
+    )
+    .sort_values('n', ascending=False)
+)
+
+display(storage_status_summary.round(2))
+
+fig, ax = plt.subplots(figsize=(8, 4))
+
+storage_status_summary['n'].sort_values().plot(
+    kind='barh',
+    ax=ax,
+    color=ACCENT
+)
+
+ax.set_title("Trạng thái đầy đủ của thông tin ổ cứng")
+ax.set_xlabel("Số listing")
+ax.set_ylabel("")
+ax.spines[['top', 'right']].set_visible(False)
+
+plt.tight_layout()
+plt.show()

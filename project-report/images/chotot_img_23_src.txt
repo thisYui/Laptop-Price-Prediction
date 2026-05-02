@@ -1,0 +1,14 @@
+Cell Index: 141
+--- Source ---
+wty_vc = df['Chính sách bảo hành'].value_counts(dropna=False)
+display(wty_vc.to_frame())
+
+fig, ax = plt.subplots(figsize=(10, 4))
+wty_vc.sort_values().plot(kind='barh', ax=ax, color=ACCENT)
+ax.set_title("Phân phối Chính sách bảo hành")
+ax.set_xlabel("Số listing")
+for i, v in enumerate(wty_vc.sort_values().values):
+    ax.text(v + 3, i, str(v), va='center', fontsize=9)
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()

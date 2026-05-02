@@ -1,0 +1,53 @@
+Cell Index: 84
+--- Source ---
+# ── 6.8 RAM tier × storage tier median price ────────────────────────────────
+
+MIN_CELL_N = 20
+
+tmp = df[
+    df["price_median"].notna()
+    & df["ram_tier_clean"].notna()
+    & df["storage_tier_clean"].notna()
+    & df["ram_tier_clean"].ne("Unknown")
+    & df["storage_tier_clean"].ne("Unknown")
+].copy()
+
+ram_storage_price = tmp.pivot_table(
+    index="ram_tier_clean",
+    columns="storage_tier_clean",
+    values="price_median",
+    aggfunc="median"
+)
+
+ram_storage_count = tmp.pivot_table(
+    index="ram_tier_clean",
+    columns="storage_tier_clean",
+    values="price_median",
+    aggfunc="size"
+)
+
+ram_order = ["≤8 GB", "16 GB", "32 GB", ">32 GB", "Other"]
+storage_order = ["≤256GB", "512GB", "1TB", "2TB", ">2TB"]
+
+ram_storage_price = ram_storage_price.reindex(index=ram_order, columns=storage_order)
+ram_storage_count = ram_storage_count.reindex(index=ram_order, columns=storage_order)
+
+ram_storage_price_filtered = ram_storage_price.where(ram_storage_count >= MIN_CELL_N)
+
+plt.figure(figsize=(9, 5))
+sns.heatmap(
+    ram_storage_price_filtered,
+    annot=True,
+    fmt=".1f",
+    cmap="YlOrRd",
+    linewidths=0.5,
+    cbar_kws={"label": "Median price_median, triệu VND"}
+)
+plt.title(f"RAM Tier × Storage Tier Median Price (n >= {MIN_CELL_N})")
+plt.xlabel("Storage tier")
+plt.ylabel("RAM tier")
+plt.tight_layout()
+plt.show()
+
+print("Cell counts:")
+display(ram_storage_count.fillna(0).astype(int))

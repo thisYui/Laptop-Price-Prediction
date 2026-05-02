@@ -1,0 +1,19 @@
+Cell Index: 41
+--- Source ---
+fig, ax = plt.subplots(figsize=(6,4))
+
+sample = df_clean.dropna(subset=['_price', '_ram_gb']).sample(1500, random_state=42)
+
+x = sample['_ram_gb'] + np.random.normal(0, 0.3, size=len(sample))
+
+ax.scatter(x, sample['_price']/1e6, alpha=0.4)
+
+ax.set_xlabel("RAM (GB)")
+ax.set_ylabel("Price (Million VND)")
+ax.set_title("Price vs RAM")
+
+ax.set_xticks([4, 6, 8, 16, 32, 48, 64])
+ax.set_yticks([0, 10, 20, 30, 40, 50, 60])
+
+plt.tight_layout()
+plt.show()

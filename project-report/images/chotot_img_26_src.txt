@@ -1,0 +1,18 @@
+Cell Index: 153
+--- Source ---
+# ── Giá theo kích cỡ màn hình ───────────────────────────────────────────────────
+plot_df = (df[df['_price'].between(1e6, 100e6) & df['screen_mid'].notna()]
+           .assign(price_mil=lambda x: x['_price']/1e6))
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.boxplot(data=plot_df, x='screen_mid', y='price_mil',
+            order=sorted(plot_df['screen_mid'].unique()),
+            palette='Blues', ax=ax)
+ax.set_title("Phân phối giá theo kích cỡ màn hình")
+ax.set_xlabel("Inch (midpoint)")
+ax.set_ylabel("Triệu đồng")
+ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()
+
+df.drop(columns='screen_mid', inplace=True, errors='ignore')

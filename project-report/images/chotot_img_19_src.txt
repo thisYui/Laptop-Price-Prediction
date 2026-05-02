@@ -1,0 +1,23 @@
+Cell Index: 100
+--- Source ---
+# Pareto / cumulative coverage của Dòng máy
+
+model_counts_sorted = model_counts.sort_values(ascending=False)
+cum_coverage = model_counts_sorted.cumsum() / model_counts_sorted.sum() * 100
+
+fig, ax = plt.subplots(figsize=(9, 4))
+ax.plot(range(1, len(cum_coverage) + 1), cum_coverage.values)
+ax.axhline(80, linestyle="--", linewidth=1)
+ax.axhline(90, linestyle="--", linewidth=1)
+ax.set_title("Cumulative coverage theo số lượng Dòng máy")
+ax.set_xlabel("Số Dòng máy phổ biến nhất")
+ax.set_ylabel("Coverage (%)")
+ax.spines[["top", "right"]].set_visible(False)
+plt.tight_layout()
+plt.show()
+
+n_80 = int(np.argmax(cum_coverage.values >= 80) + 1)
+n_90 = int(np.argmax(cum_coverage.values >= 90) + 1)
+
+print(f"Số Dòng máy cần để cover 80% dữ liệu: {n_80}")
+print(f"Số Dòng máy cần để cover 90% dữ liệu: {n_90}")

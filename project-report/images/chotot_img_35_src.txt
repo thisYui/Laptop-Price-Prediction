@@ -1,0 +1,27 @@
+Cell Index: 216
+--- Source ---
+# ── Visualization GPU ───────────────────────────────────────────────────────────
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Count bar
+gpu_vc.sort_values().plot(kind='barh', ax=axes[0],
+                          color=sns.color_palette("muted", len(gpu_vc)))
+axes[0].set_title("Phân loại GPU")
+axes[0].set_xlabel("Số listing")
+for i, v in enumerate(gpu_vc.sort_values().values):
+    axes[0].text(v + 3, i, str(v), va='center', fontsize=9)
+
+# Giá theo GPU tier
+price_gpu = (df[df['_price'].between(1e6, 100e6)]
+             .assign(price_mil=lambda x: x['_price']/1e6))
+order_gpu = (price_gpu.groupby('gpu_tier')['price_mil']
+             .median().sort_values(ascending=False).index.tolist())
+sns.boxplot(data=price_gpu, x='gpu_tier', y='price_mil',
+            order=order_gpu, palette='muted', ax=axes[1])
+axes[1].set_title("Giá theo GPU Tier (1–100M)")
+axes[1].set_ylabel("Triệu đồng")
+axes[1].set_xticklabels(axes[1].get_xticklabels(), rotation=35, ha='right')
+
+for ax in axes: ax.spines[['top','right']].set_visible(False)
+plt.tight_layout()
+plt.show()
