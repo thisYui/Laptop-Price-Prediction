@@ -4,9 +4,9 @@
     "issues_path": "Y:\\Python\\Laptop-Price-Prediction\\docs\\websach_issues_list.csv",
     "output_dir": "Y:\\Python\\Laptop-Price-Prediction\\data\\intern",
     "cleaned_path": "Y:\\Python\\Laptop-Price-Prediction\\data\\intern\\websach_cleaned.csv",
-    "report_path": "Y:\\Python\\Laptop-Price-Prediction\\data\\intern\\websach_cleaning_report.csv",
-    "issue_action_plan_path": "Y:\\Python\\Laptop-Price-Prediction\\data\\intern\\websach_issue_action_plan.csv",
-    "log_path": "Y:\\Python\\Laptop-Price-Prediction\\data\\intern\\websach_cleaning_log.json",
+    "report_path": "Y:\\Python\\Laptop-Price-Prediction\\docs\\websach_cleaning_report.csv",
+    "issue_action_plan_path": "Y:\\Python\\Laptop-Price-Prediction\\docs\\websach_issue_action_plan.csv",
+    "log_path": "Y:\\Python\\Laptop-Price-Prediction\\docs\\websach_cleaning_log.json",
     "price_cols": [
       "shop_1_price",
       "shop_2_price",
