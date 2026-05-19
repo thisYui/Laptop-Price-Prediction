@@ -68,8 +68,6 @@ Thumbs.db
 .coverage
 htmlcov/
 
-docs/
-
 GEMINI.md
 
 test.*
