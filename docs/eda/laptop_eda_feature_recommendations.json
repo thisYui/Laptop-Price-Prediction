@@ -97,13 +97,13 @@
     "highest_missing_like_columns": {
       "origin_clean": 0.7717261904761905,
       "warranty_months": 0.7573412698412698,
-      "model_is_rare": 0.43472222222222223,
       "url": 0.43472222222222223,
-      "title": 0.43472222222222223,
-      "model_clean": 0.43472222222222223,
       "model_grouped": 0.43472222222222223,
-      "condition_clean": 0.43472222222222223,
+      "model_clean": 0.43472222222222223,
+      "model_is_rare": 0.43472222222222223,
       "warranty_status": 0.43472222222222223,
+      "condition_clean": 0.43472222222222223,
+      "title": 0.43472222222222223,
       "gpu_tier": 0.1501984126984127
     },
     "duplicate_summary": {
@@ -112,5 +112,46 @@
       "unique_duplicated_spec_keys": 1530,
       "cross_source_overlapped_spec_keys": 0
     }
-  }
+  },
+  "baseline_feature_list": [
+    "ram_gb",
+    "storage_gb",
+    "screen_size_inch",
+    "warranty_months",
+    "brand_grouped",
+    "model_grouped",
+    "cpu_brand",
+    "cpu_tier",
+    "gpu_tier",
+    "storage_type_clean",
+    "condition_clean",
+    "warranty_status",
+    "origin_clean",
+    "brand_is_rare",
+    "model_is_rare",
+    "ram_missing",
+    "storage_missing",
+    "screen_missing",
+    "cpu_missing",
+    "gpu_missing",
+    "ram_suspicious",
+    "storage_suspicious",
+    "screen_suspicious",
+    "potential_dedicated_gpu",
+    "repair_mismatch",
+    "is_soft_duplicate_spec"
+  ],
+  "baseline_leakage_sanity_check": {
+    "baseline_feature_count": 26,
+    "forbidden_hits": [],
+    "missing_cols": []
+  },
+  "feature_coverage_low_coverage_flags": [
+    "origin_clean",
+    "warranty_months",
+    "model_grouped",
+    "condition_clean",
+    "warranty_status",
+    "model_is_rare"
+  ]
 }
