@@ -1,3 +1,0 @@
-Cell Index: 27
---- Source ---
-msno.dendrogram(df[spec_cols], figsize=(6, 5))

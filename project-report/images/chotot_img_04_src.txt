@@ -1,3 +1,0 @@
-Cell Index: 25
---- Source ---
-msno.heatmap(df[spec_cols], figsize=(6, 5))
