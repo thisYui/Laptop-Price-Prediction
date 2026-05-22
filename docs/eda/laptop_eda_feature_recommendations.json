@@ -97,13 +97,13 @@
     "highest_missing_like_columns": {
       "origin_clean": 0.7717261904761905,
       "warranty_months": 0.7573412698412698,
-      "url": 0.43472222222222223,
-      "model_grouped": 0.43472222222222223,
-      "model_clean": 0.43472222222222223,
       "model_is_rare": 0.43472222222222223,
-      "warranty_status": 0.43472222222222223,
-      "condition_clean": 0.43472222222222223,
+      "url": 0.43472222222222223,
       "title": 0.43472222222222223,
+      "model_clean": 0.43472222222222223,
+      "model_grouped": 0.43472222222222223,
+      "condition_clean": 0.43472222222222223,
+      "warranty_status": 0.43472222222222223,
       "gpu_tier": 0.1501984126984127
     },
     "duplicate_summary": {
