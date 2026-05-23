@@ -71,3 +71,11 @@ htmlcov/
 GEMINI.md
 
 test.*
+plots/*
+*.png
+artifacts/modeling/feature_importance/
+artifacts/modeling/model_diagnostics/
+artifacts/modeling/plots/
+artifacts/modeling/predictions/
+artifacts/modeling/target_comparison/
+artifacts/modeling/models/
