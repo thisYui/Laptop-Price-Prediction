@@ -1,0 +1,5 @@
+Question,Evidence,Decision
+Log target hay target thường?,"log_target_price cải thiện MAE/MAPE trên tất cả model + encoding. RMSE penalty ~1–3%, nằm trong ngưỡng chấp nhận 5%. accept_log=True toàn bộ.",Chọn log_target_price làm target chính. Giữ target_price làm đối chứng RMSE.
+Numeric hay level encoding?,"Numeric có MAE tốt hơn hoặc tương đương level (chênh lệch < 3% = tie). Numeric đơn giản hơn trong pipeline, không cần mapping phức tạp.",Chọn numeric làm encoding chính. Giữ level nếu cần kiểm tra thêm.
+CatBoost hay LightGBM?,CatBoost có MAE/MAPE tốt nhất hoặc ổn định nhất trên tất cả cấu hình. LightGBM kém hơn ~7–10% MAE nhưng vẫn là model mạnh thứ hai.,Chọn CatBoost làm model chính. Giữ LightGBM làm baseline mạnh để xác nhận pattern.
+Candidate nào đi tiếp notebook 10?,CatBoost + numeric + log_target_price có MAE/MAPE tốt nhất. RMSE penalty chấp nhận được (< 5%). Numeric encoding đơn giản hơn.,Fine-tune CatBoost + numeric + log_target_price trước. Giữ CatBoost + level/numeric + target_price làm đối chứng.

@@ -1,0 +1,5 @@
+rank,model_name,encoding_type,target_used,rmse,mae,mape,r2,reason
+1,CatBoost,numeric,log_target_price,5.6352132513278015,3.4316641708244653,0.2884409250888934,0.857534904969742,Lowest MAE and MAPE; primary fine-tuning candidate
+2,LightGBM,numeric,log_target_price,5.76437741030448,3.4507357734399524,0.2889051779421001,0.8509292020457647,Strong secondary candidate; close to primary on MAE
+3,CatBoost,numeric,target_price,5.514597447136053,3.48868111053997,0.328528308809212,0.8635682681946507,Strong boosting alternative; validates pattern across model families
+4,CatBoost,level,log_target_price,5.70729583654475,3.5142092334599058,0.2975274221051645,0.8538669225032597,Strong boosting alternative; validates pattern across model families

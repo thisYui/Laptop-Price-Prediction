@@ -1,0 +1,5 @@
+rank,model_name,encoding_type,target_used,rmse,mae,mape,r2,role,reason
+1,CatBoost,numeric,log_target_price,5.6352132513278015,3.4316641708244653,0.2884409250888934,0.857534904969742,main_candidate,MAE/MAPE tốt nhất; cấu hình được fine-tune trong notebook 10
+2,CatBoost,level,target_price,5.510256635491748,3.537225648973906,0.3361012041256254,0.8637829679515091,rmse_control_candidate,RMSE thấp nhất; giữ để kiểm tra outlier và laptop giá cao
+3,LightGBM,numeric,log_target_price,5.76437741030448,3.4507357734399524,0.2889051779421001,0.8509292020457647,secondary_candidate,Model mạnh thứ hai; xác nhận pattern không chỉ đúng với CatBoost
+4,CatBoost,numeric,target_price,5.514597447136053,3.48868111053997,0.328528308809212,0.8635682681946507,optional_candidate,Backup; có thể bỏ nếu tài nguyên hạn chế
