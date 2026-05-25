@@ -1,0 +1,77 @@
+target,feature,importance_mean,importance_std,scope,segment,group
+log_target_price,cpu_brand_Apple,0.10219713770368513,0.009999212894817547,segment,Premium,brand
+log_target_price,ram_gb,0.09612509021743276,0.013129206237295703,segment,Premium,ram
+log_target_price,warranty_encoded,0.07382797082365963,0.007778939143390805,segment,Premium,other
+log_target_price,no_info_condition,0.07005305878359377,0.00863859071431426,segment,Premium,other
+log_target_price,cpu_tier_encoded,0.050094074354271156,0.004270294791740885,segment,Premium,cpu
+log_target_price,brand_Apple,0.04860644122480644,0.004093011343740011,segment,Premium,brand
+log_target_price,storage_gb,0.04140709426368598,0.009320053188428557,segment,Premium,storage
+log_target_price,screen_size_inch,0.017501624850723672,0.0036730082493766298,segment,Premium,screen
+log_target_price,gpu_tier_ord_filled,0.01705692380307494,0.0022409977359223064,segment,Premium,gpu
+log_target_price,gpu_type_Dedicated,0.012233601201806521,0.0017222240369709832,segment,Premium,gpu
+log_target_price,brand_Microsoft,0.007971300075606503,0.0017424387233763849,segment,Premium,brand
+log_target_price,cpu_brand_Intel,0.006742190564503226,0.0020042489998558758,segment,Premium,brand
+log_target_price,ram_missing,0.0062681814195362,0.0007137980976247807,segment,Premium,ram
+log_target_price,no_info_cpu_tier,0.00555500469331065,0.00046465599483240603,segment,Premium,cpu
+log_target_price,storage_hdd,0.004150646882516507,0.0019217662186365857,segment,Premium,storage
+log_target_price,gpu_type_Integrated,0.0039853854642105556,0.0008731530767983898,segment,Premium,gpu
+log_target_price,condition_score,0.003838483844127727,0.002716239103464537,segment,Premium,cpu
+log_target_price,brand_LG,0.00310567052991082,0.0005093175965636197,segment,Premium,brand
+log_target_price,model_MacBook Pro,0.0026469848541393337,0.00029903174250464154,segment,Premium,other
+log_target_price,cpu_brand_AMD,0.0023750676575816864,0.000791023013156017,segment,Premium,brand
+log_target_price,brand_Acer,0.0022760011500817857,0.0005911659961723687,segment,Premium,brand
+log_target_price,storage_missing,0.002085069174924703,0.00022447832848726664,segment,Premium,storage
+log_target_price,brand_Dell,0.0018276646447920597,0.0010261813969317936,segment,Premium,brand
+log_target_price,no_info_model,0.001678719781168414,0.0006191570760761398,segment,Premium,other
+log_target_price,brand_HP,0.0016074126396672494,0.0005069987513525909,segment,Premium,brand
+log_target_price,brand_Lenovo,0.0015602107695668944,0.0006491175734976728,segment,Premium,brand
+log_target_price,brand_is_rare,0.0012020183120136307,0.00046166708113424664,segment,Premium,brand
+log_target_price,gpu_type_Missing_Info,0.0011357244172610526,0.000541696744156641,segment,Premium,gpu
+log_target_price,model_MacBook Pro M1,0.0011151599491106446,0.0005436365299969579,segment,Premium,other
+log_target_price,model_Legion 5,0.0009661679939386824,0.0016061955772480123,segment,Premium,other
+log_target_price,model_Other,0.0009396546077067413,0.0005317728755246646,segment,Premium,other
+log_target_price,no_info_gpu,0.0005412151274664323,0.00034578986100009836,segment,Premium,gpu
+log_target_price,brand_MSI,0.0005067651460716304,0.00011571607835881977,segment,Premium,brand
+log_target_price,model_MacBook Air,0.0003323706033564244,0.00031311786067451193,segment,Premium,other
+log_target_price,model_ThinkPad X1 Carbon,0.00028044307650475496,6.393902456701795e-05,segment,Premium,other
+log_target_price,cpu_brand_Other,0.0002667620334471987,0.00016444883329518173,segment,Premium,brand
+log_target_price,model_Legion,0.00024273429610367493,0.0002643446018884749,segment,Premium,other
+log_target_price,model_Macbook air m4,0.00022785630018685722,0.0001879279403833252,segment,Premium,other
+log_target_price,model_MacBook Pro M2,0.0001474726684917549,6.510606005231285e-05,segment,Premium,other
+log_target_price,storage_ssd,0.00014649065303350416,0.0003041594778515688,segment,Premium,storage
+log_target_price,screen_missing,0.0001455847474992167,2.564789878934378e-05,segment,Premium,screen
+log_target_price,model_Elitebook,0.00010577305010022187,9.074210327880953e-05,segment,Premium,other
+log_target_price,gpu_type_Apple SoC,5.182870186216659e-05,4.1957285371096963e-05,segment,Premium,gpu
+log_target_price,model_is_rare,3.178998773289976e-05,0.000128877679953363,segment,Premium,other
+log_target_price,brand_Gigabyte,1.4872280951516715e-05,0.00018684741717698162,segment,Premium,brand
+log_target_price,model_MacBook Air M2,8.404370285997054e-06,1.469863135332938e-05,segment,Premium,other
+log_target_price,model_Precision,6.6142659955970015e-06,6.699528976747043e-05,segment,Premium,other
+log_target_price,cpu_brand_Microsoft SQ,1.0435368733574535e-06,5.577616229494995e-06,segment,Premium,brand
+log_target_price,model_Vivobook 15,0.0,0.0,segment,Premium,other
+log_target_price,model_Vostro,0.0,0.0,segment,Premium,other
+log_target_price,model_ROG Strix,0.0,0.0,segment,Premium,other
+log_target_price,model_X Series,0.0,0.0,segment,Premium,other
+log_target_price,model_ThinkPad,0.0,0.0,segment,Premium,other
+log_target_price,model_XPS 13,0.0,0.0,segment,Premium,other
+log_target_price,model_TUF Gaming F15,0.0,0.0,segment,Premium,other
+log_target_price,model_TUF Gaming,0.0,0.0,segment,Premium,other
+log_target_price,model_Aspire,0.0,0.0,segment,Premium,other
+log_target_price,model_ProBook,0.0,0.0,segment,Premium,other
+log_target_price,model_Latitude E Series,0.0,0.0,segment,Premium,other
+log_target_price,model_Gaming Thin GF,0.0,0.0,segment,Premium,other
+log_target_price,model_IdeaPad,0.0,0.0,segment,Premium,other
+log_target_price,model_Latitude,0.0,0.0,segment,Premium,other
+log_target_price,model_Pavilion 15,0.0,0.0,segment,Premium,other
+log_target_price,model_Latitude 14 7000,0.0,0.0,segment,Premium,other
+log_target_price,model_Inspiron,0.0,0.0,segment,Premium,other
+log_target_price,brand_Toshiba,0.0,0.0,segment,Premium,brand
+log_target_price,model_MacBook Air M1,0.0,0.0,segment,Premium,other
+log_target_price,brand_Sony,0.0,0.0,segment,Premium,brand
+log_target_price,brand_Other,-2.103784049956037e-06,0.00017708538257117854,segment,Premium,brand
+log_target_price,no_info_storage,-3.2843103269453167e-06,0.0005629595321387047,segment,Premium,storage
+log_target_price,model_Elitebook 800,-3.3712282005315955e-05,1.3693162379078634e-05,segment,Premium,other
+log_target_price,cpu_brand_Qualcomm,-6.424793772819015e-05,6.718558999608304e-05,segment,Premium,brand
+log_target_price,no_info_brand,-8.514738493770047e-05,3.332313369260992e-05,segment,Premium,brand
+log_target_price,brand_ASUS,-0.0001290052003625086,0.0009669670423825171,segment,Premium,brand
+log_target_price,model_Nitro 5,-0.00016245827542789027,3.391176459155262e-05,segment,Premium,other
+log_target_price,no_info_cpu_brand,-0.00035251158167399766,0.00025175162923463215,segment,Premium,brand

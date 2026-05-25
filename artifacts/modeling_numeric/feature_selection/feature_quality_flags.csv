@@ -1,0 +1,6 @@
+category,features,count
+leakage_candidate,[],0
+id_like_candidate,[],0
+constant,[],0
+high_missing_90,[],0
+high_cardinality_non_numeric,[],0

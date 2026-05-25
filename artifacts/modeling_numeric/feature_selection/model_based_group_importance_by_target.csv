@@ -1,0 +1,15 @@
+target,group,importance
+log_target_price,other,38.47833215160665
+log_target_price,ram,19.755010511867344
+log_target_price,storage,16.310845188347344
+log_target_price,brand,11.521210325752195
+log_target_price,cpu,7.652562812887197
+log_target_price,gpu,3.870012349838177
+log_target_price,screen,2.4120266597011475
+target_price,other,30.39326468458745
+target_price,ram,22.087805987137326
+target_price,storage,13.949097321347395
+target_price,cpu,12.159484758733065
+target_price,brand,10.470607190346119
+target_price,gpu,7.095009845854971
+target_price,screen,3.8447302119936566

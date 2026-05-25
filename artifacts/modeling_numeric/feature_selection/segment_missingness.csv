@@ -1,0 +1,305 @@
+price_segment,feature,missing_rate,group
+Low,ram_gb,0.0,ram
+Low,model_MacBook Pro M1,0.0,other
+Low,model_ProBook,0.0,other
+Low,model_Precision,0.0,other
+Low,model_Pavilion 15,0.0,other
+Low,model_Other,0.0,other
+Low,model_Nitro 5,0.0,other
+Low,model_Macbook air m4,0.0,other
+Low,model_MacBook Pro M2,0.0,other
+Low,model_MacBook Pro,0.0,other
+Low,storage_gb,0.0,storage
+Low,model_MacBook Air M2,0.0,other
+Low,model_MacBook Air M1,0.0,other
+Low,model_MacBook Air,0.0,other
+Low,model_Legion 5,0.0,other
+Low,model_Legion,0.0,other
+Low,model_Latitude E Series,0.0,other
+Low,model_Latitude 14 7000,0.0,other
+Low,model_ROG Strix,0.0,other
+Low,model_TUF Gaming,0.0,other
+Low,model_TUF Gaming F15,0.0,other
+Low,model_ThinkPad,0.0,other
+Low,gpu_type_Integrated,0.0,gpu
+Low,gpu_type_Dedicated,0.0,gpu
+Low,gpu_type_Apple SoC,0.0,gpu
+Low,gpu_tier_ord_filled,0.0,gpu
+Low,cpu_brand_Qualcomm,0.0,brand
+Low,cpu_brand_Other,0.0,brand
+Low,cpu_brand_Microsoft SQ,0.0,brand
+Low,cpu_brand_Intel,0.0,brand
+Low,cpu_brand_Apple,0.0,brand
+Low,cpu_brand_AMD,0.0,brand
+Low,model_XPS 13,0.0,other
+Low,model_X Series,0.0,other
+Low,model_Vostro,0.0,other
+Low,model_Vivobook 15,0.0,other
+Low,model_ThinkPad X1 Carbon,0.0,other
+Low,model_Latitude,0.0,other
+Low,model_Inspiron,0.0,other
+Low,model_IdeaPad,0.0,other
+Low,warranty_encoded,0.0,other
+Low,no_info_condition,0.0,other
+Low,no_info_storage,0.0,storage
+Low,storage_hdd,0.0,storage
+Low,storage_ssd,0.0,storage
+Low,no_info_gpu,0.0,gpu
+Low,no_info_cpu_tier,0.0,cpu
+Low,no_info_cpu_brand,0.0,brand
+Low,no_info_model,0.0,other
+Low,no_info_brand,0.0,brand
+Low,screen_missing,0.0,screen
+Low,storage_missing,0.0,storage
+Low,ram_missing,0.0,ram
+Low,model_is_rare,0.0,other
+Low,brand_is_rare,0.0,brand
+Low,screen_size_inch,0.0,screen
+Low,condition_score,0.0,cpu
+Low,cpu_tier_encoded,0.0,cpu
+Low,model_Gaming Thin GF,0.0,other
+Low,brand_ASUS,0.0,brand
+Low,model_Elitebook 800,0.0,other
+Low,model_Elitebook,0.0,other
+Low,model_Aspire,0.0,other
+Low,brand_Toshiba,0.0,brand
+Low,brand_Sony,0.0,brand
+Low,brand_Other,0.0,brand
+Low,brand_Microsoft,0.0,brand
+Low,brand_MSI,0.0,brand
+Low,brand_Lenovo,0.0,brand
+Low,brand_LG,0.0,brand
+Low,brand_HP,0.0,brand
+Low,brand_Gigabyte,0.0,brand
+Low,brand_Dell,0.0,brand
+Low,brand_Apple,0.0,brand
+Low,brand_Acer,0.0,brand
+Low,gpu_type_Missing_Info,0.0,gpu
+Mid,ram_gb,0.0,ram
+Mid,model_MacBook Pro M1,0.0,other
+Mid,model_ProBook,0.0,other
+Mid,model_Precision,0.0,other
+Mid,model_Pavilion 15,0.0,other
+Mid,model_Other,0.0,other
+Mid,model_Nitro 5,0.0,other
+Mid,model_Macbook air m4,0.0,other
+Mid,model_MacBook Pro M2,0.0,other
+Mid,model_MacBook Pro,0.0,other
+Mid,storage_gb,0.0,storage
+Mid,model_MacBook Air M2,0.0,other
+Mid,model_MacBook Air M1,0.0,other
+Mid,model_MacBook Air,0.0,other
+Mid,model_Legion 5,0.0,other
+Mid,model_Legion,0.0,other
+Mid,model_Latitude E Series,0.0,other
+Mid,model_Latitude 14 7000,0.0,other
+Mid,model_ROG Strix,0.0,other
+Mid,model_TUF Gaming,0.0,other
+Mid,model_TUF Gaming F15,0.0,other
+Mid,model_ThinkPad,0.0,other
+Mid,gpu_type_Integrated,0.0,gpu
+Mid,gpu_type_Dedicated,0.0,gpu
+Mid,gpu_type_Apple SoC,0.0,gpu
+Mid,gpu_tier_ord_filled,0.0,gpu
+Mid,cpu_brand_Qualcomm,0.0,brand
+Mid,cpu_brand_Other,0.0,brand
+Mid,cpu_brand_Microsoft SQ,0.0,brand
+Mid,cpu_brand_Intel,0.0,brand
+Mid,cpu_brand_Apple,0.0,brand
+Mid,cpu_brand_AMD,0.0,brand
+Mid,model_XPS 13,0.0,other
+Mid,model_X Series,0.0,other
+Mid,model_Vostro,0.0,other
+Mid,model_Vivobook 15,0.0,other
+Mid,model_ThinkPad X1 Carbon,0.0,other
+Mid,model_Latitude,0.0,other
+Mid,model_Inspiron,0.0,other
+Mid,model_IdeaPad,0.0,other
+Mid,warranty_encoded,0.0,other
+Mid,no_info_condition,0.0,other
+Mid,no_info_storage,0.0,storage
+Mid,storage_hdd,0.0,storage
+Mid,storage_ssd,0.0,storage
+Mid,no_info_gpu,0.0,gpu
+Mid,no_info_cpu_tier,0.0,cpu
+Mid,no_info_cpu_brand,0.0,brand
+Mid,no_info_model,0.0,other
+Mid,no_info_brand,0.0,brand
+Mid,screen_missing,0.0,screen
+Mid,storage_missing,0.0,storage
+Mid,ram_missing,0.0,ram
+Mid,model_is_rare,0.0,other
+Mid,brand_is_rare,0.0,brand
+Mid,screen_size_inch,0.0,screen
+Mid,condition_score,0.0,cpu
+Mid,cpu_tier_encoded,0.0,cpu
+Mid,model_Gaming Thin GF,0.0,other
+Mid,brand_ASUS,0.0,brand
+Mid,model_Elitebook 800,0.0,other
+Mid,model_Elitebook,0.0,other
+Mid,model_Aspire,0.0,other
+Mid,brand_Toshiba,0.0,brand
+Mid,brand_Sony,0.0,brand
+Mid,brand_Other,0.0,brand
+Mid,brand_Microsoft,0.0,brand
+Mid,brand_MSI,0.0,brand
+Mid,brand_Lenovo,0.0,brand
+Mid,brand_LG,0.0,brand
+Mid,brand_HP,0.0,brand
+Mid,brand_Gigabyte,0.0,brand
+Mid,brand_Dell,0.0,brand
+Mid,brand_Apple,0.0,brand
+Mid,brand_Acer,0.0,brand
+Mid,gpu_type_Missing_Info,0.0,gpu
+High,ram_gb,0.0,ram
+High,model_MacBook Pro M1,0.0,other
+High,model_ProBook,0.0,other
+High,model_Precision,0.0,other
+High,model_Pavilion 15,0.0,other
+High,model_Other,0.0,other
+High,model_Nitro 5,0.0,other
+High,model_Macbook air m4,0.0,other
+High,model_MacBook Pro M2,0.0,other
+High,model_MacBook Pro,0.0,other
+High,storage_gb,0.0,storage
+High,model_MacBook Air M2,0.0,other
+High,model_MacBook Air M1,0.0,other
+High,model_MacBook Air,0.0,other
+High,model_Legion 5,0.0,other
+High,model_Legion,0.0,other
+High,model_Latitude E Series,0.0,other
+High,model_Latitude 14 7000,0.0,other
+High,model_ROG Strix,0.0,other
+High,model_TUF Gaming,0.0,other
+High,model_TUF Gaming F15,0.0,other
+High,model_ThinkPad,0.0,other
+High,gpu_type_Integrated,0.0,gpu
+High,gpu_type_Dedicated,0.0,gpu
+High,gpu_type_Apple SoC,0.0,gpu
+High,gpu_tier_ord_filled,0.0,gpu
+High,cpu_brand_Qualcomm,0.0,brand
+High,cpu_brand_Other,0.0,brand
+High,cpu_brand_Microsoft SQ,0.0,brand
+High,cpu_brand_Intel,0.0,brand
+High,cpu_brand_Apple,0.0,brand
+High,cpu_brand_AMD,0.0,brand
+High,model_XPS 13,0.0,other
+High,model_X Series,0.0,other
+High,model_Vostro,0.0,other
+High,model_Vivobook 15,0.0,other
+High,model_ThinkPad X1 Carbon,0.0,other
+High,model_Latitude,0.0,other
+High,model_Inspiron,0.0,other
+High,model_IdeaPad,0.0,other
+High,warranty_encoded,0.0,other
+High,no_info_condition,0.0,other
+High,no_info_storage,0.0,storage
+High,storage_hdd,0.0,storage
+High,storage_ssd,0.0,storage
+High,no_info_gpu,0.0,gpu
+High,no_info_cpu_tier,0.0,cpu
+High,no_info_cpu_brand,0.0,brand
+High,no_info_model,0.0,other
+High,no_info_brand,0.0,brand
+High,screen_missing,0.0,screen
+High,storage_missing,0.0,storage
+High,ram_missing,0.0,ram
+High,model_is_rare,0.0,other
+High,brand_is_rare,0.0,brand
+High,screen_size_inch,0.0,screen
+High,condition_score,0.0,cpu
+High,cpu_tier_encoded,0.0,cpu
+High,model_Gaming Thin GF,0.0,other
+High,brand_ASUS,0.0,brand
+High,model_Elitebook 800,0.0,other
+High,model_Elitebook,0.0,other
+High,model_Aspire,0.0,other
+High,brand_Toshiba,0.0,brand
+High,brand_Sony,0.0,brand
+High,brand_Other,0.0,brand
+High,brand_Microsoft,0.0,brand
+High,brand_MSI,0.0,brand
+High,brand_Lenovo,0.0,brand
+High,brand_LG,0.0,brand
+High,brand_HP,0.0,brand
+High,brand_Gigabyte,0.0,brand
+High,brand_Dell,0.0,brand
+High,brand_Apple,0.0,brand
+High,brand_Acer,0.0,brand
+High,gpu_type_Missing_Info,0.0,gpu
+Premium,ram_gb,0.0,ram
+Premium,model_MacBook Pro M1,0.0,other
+Premium,model_ProBook,0.0,other
+Premium,model_Precision,0.0,other
+Premium,model_Pavilion 15,0.0,other
+Premium,model_Other,0.0,other
+Premium,model_Nitro 5,0.0,other
+Premium,model_Macbook air m4,0.0,other
+Premium,model_MacBook Pro M2,0.0,other
+Premium,model_MacBook Pro,0.0,other
+Premium,storage_gb,0.0,storage
+Premium,model_MacBook Air M2,0.0,other
+Premium,model_MacBook Air M1,0.0,other
+Premium,model_MacBook Air,0.0,other
+Premium,model_Legion 5,0.0,other
+Premium,model_Legion,0.0,other
+Premium,model_Latitude E Series,0.0,other
+Premium,model_Latitude 14 7000,0.0,other
+Premium,model_ROG Strix,0.0,other
+Premium,model_TUF Gaming,0.0,other
+Premium,model_TUF Gaming F15,0.0,other
+Premium,model_ThinkPad,0.0,other
+Premium,gpu_type_Integrated,0.0,gpu
+Premium,gpu_type_Dedicated,0.0,gpu
+Premium,gpu_type_Apple SoC,0.0,gpu
+Premium,gpu_tier_ord_filled,0.0,gpu
+Premium,cpu_brand_Qualcomm,0.0,brand
+Premium,cpu_brand_Other,0.0,brand
+Premium,cpu_brand_Microsoft SQ,0.0,brand
+Premium,cpu_brand_Intel,0.0,brand
+Premium,cpu_brand_Apple,0.0,brand
+Premium,cpu_brand_AMD,0.0,brand
+Premium,model_XPS 13,0.0,other
+Premium,model_X Series,0.0,other
+Premium,model_Vostro,0.0,other
+Premium,model_Vivobook 15,0.0,other
+Premium,model_ThinkPad X1 Carbon,0.0,other
+Premium,model_Latitude,0.0,other
+Premium,model_Inspiron,0.0,other
+Premium,model_IdeaPad,0.0,other
+Premium,warranty_encoded,0.0,other
+Premium,no_info_condition,0.0,other
+Premium,no_info_storage,0.0,storage
+Premium,storage_hdd,0.0,storage
+Premium,storage_ssd,0.0,storage
+Premium,no_info_gpu,0.0,gpu
+Premium,no_info_cpu_tier,0.0,cpu
+Premium,no_info_cpu_brand,0.0,brand
+Premium,no_info_model,0.0,other
+Premium,no_info_brand,0.0,brand
+Premium,screen_missing,0.0,screen
+Premium,storage_missing,0.0,storage
+Premium,ram_missing,0.0,ram
+Premium,model_is_rare,0.0,other
+Premium,brand_is_rare,0.0,brand
+Premium,screen_size_inch,0.0,screen
+Premium,condition_score,0.0,cpu
+Premium,cpu_tier_encoded,0.0,cpu
+Premium,model_Gaming Thin GF,0.0,other
+Premium,brand_ASUS,0.0,brand
+Premium,model_Elitebook 800,0.0,other
+Premium,model_Elitebook,0.0,other
+Premium,model_Aspire,0.0,other
+Premium,brand_Toshiba,0.0,brand
+Premium,brand_Sony,0.0,brand
+Premium,brand_Other,0.0,brand
+Premium,brand_Microsoft,0.0,brand
+Premium,brand_MSI,0.0,brand
+Premium,brand_Lenovo,0.0,brand
+Premium,brand_LG,0.0,brand
+Premium,brand_HP,0.0,brand
+Premium,brand_Gigabyte,0.0,brand
+Premium,brand_Dell,0.0,brand
+Premium,brand_Apple,0.0,brand
+Premium,brand_Acer,0.0,brand
+Premium,gpu_type_Missing_Info,0.0,gpu

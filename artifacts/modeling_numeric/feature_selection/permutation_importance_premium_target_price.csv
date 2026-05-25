@@ -1,0 +1,77 @@
+target,feature,importance_mean,importance_std,scope,segment,group
+target_price,ram_gb,5.2810501971630845,0.39285112202183947,segment,Premium,ram
+target_price,cpu_tier_encoded,2.5777333913651748,0.2912745600565502,segment,Premium,cpu
+target_price,storage_gb,2.5246314298074903,0.30038736027672025,segment,Premium,storage
+target_price,warranty_encoded,2.0531289072515464,0.48128875047664155,segment,Premium,other
+target_price,cpu_brand_Apple,1.8220962570943193,0.10272094044409492,segment,Premium,brand
+target_price,no_info_condition,1.2883533964276004,0.32593512007879405,segment,Premium,other
+target_price,gpu_tier_ord_filled,0.887028587423966,0.08404570834370372,segment,Premium,gpu
+target_price,screen_size_inch,0.6234772475698985,0.12912838261996393,segment,Premium,screen
+target_price,gpu_type_Integrated,0.3248188469634723,0.13444947664376955,segment,Premium,gpu
+target_price,brand_Apple,0.19806915795631105,0.011536416774819164,segment,Premium,brand
+target_price,brand_Microsoft,0.1659358722372474,0.04518886693464177,segment,Premium,brand
+target_price,gpu_type_Dedicated,0.15950793245594283,0.050289019313406576,segment,Premium,gpu
+target_price,brand_Dell,0.14247620822318474,0.030156553379384974,segment,Premium,brand
+target_price,cpu_brand_Intel,0.126221160797731,0.032307723502773826,segment,Premium,brand
+target_price,condition_score,0.10205181964825165,0.022795470952087556,segment,Premium,cpu
+target_price,brand_Lenovo,0.07909213257944821,0.039541116303505666,segment,Premium,brand
+target_price,brand_HP,0.07275679402975506,0.13304031660714366,segment,Premium,brand
+target_price,cpu_brand_AMD,0.06105369609796298,0.025661108133478817,segment,Premium,brand
+target_price,no_info_cpu_tier,0.058653671341835786,0.027588235608896994,segment,Premium,cpu
+target_price,brand_ASUS,0.0567422270716321,0.043817879634362296,segment,Premium,brand
+target_price,no_info_gpu,0.05395701111968911,0.01713297301296269,segment,Premium,gpu
+target_price,brand_LG,0.0493151364012661,0.01276777998045742,segment,Premium,brand
+target_price,ram_missing,0.03463128895925856,0.005887690755308053,segment,Premium,ram
+target_price,cpu_brand_Qualcomm,0.02857720329202067,0.015605347706847236,segment,Premium,brand
+target_price,gpu_type_Missing_Info,0.025740897687917652,0.010836083594697609,segment,Premium,gpu
+target_price,model_MacBook Pro M1,0.022683326230405497,0.011350160712363569,segment,Premium,other
+target_price,brand_Other,0.021874628222225568,0.018917302156197364,segment,Premium,brand
+target_price,brand_MSI,0.021652607775206077,0.02233971099447762,segment,Premium,brand
+target_price,model_Legion 5,0.01937685152970765,0.013606229156594438,segment,Premium,other
+target_price,gpu_type_Apple SoC,0.019010265395927206,0.021398991662402944,segment,Premium,gpu
+target_price,model_Other,0.018017654317718623,0.022011341482447266,segment,Premium,other
+target_price,no_info_model,0.01152770349916885,0.02419780601248525,segment,Premium,other
+target_price,cpu_brand_Other,0.008275049902828967,0.007700871703004845,segment,Premium,brand
+target_price,brand_Acer,0.008097721188154595,0.013559344022610387,segment,Premium,brand
+target_price,brand_is_rare,0.007987138611950684,0.006197260511129736,segment,Premium,brand
+target_price,model_Legion,0.00680340957565555,0.005706102788322429,segment,Premium,other
+target_price,storage_ssd,0.00632367438430137,0.010550096485323839,segment,Premium,storage
+target_price,brand_Gigabyte,0.0062431438466344245,0.013114720787108671,segment,Premium,brand
+target_price,storage_hdd,0.006116234423380007,0.013122711637078144,segment,Premium,storage
+target_price,model_Macbook air m4,0.0038472791543991748,0.00557811836952141,segment,Premium,other
+target_price,no_info_cpu_brand,0.0037417517651526567,0.005684541715288133,segment,Premium,brand
+target_price,model_ThinkPad X1 Carbon,0.001777892217877408,0.0012274070495876617,segment,Premium,other
+target_price,model_MacBook Air M2,0.0010825945233072787,0.0007344400251081353,segment,Premium,other
+target_price,screen_missing,0.0005590901002808125,0.00014773798230771312,segment,Premium,screen
+target_price,model_is_rare,0.0004438366268335159,0.0007443517155346325,segment,Premium,other
+target_price,model_MacBook Air,0.00014696344360700663,0.00019984756614018216,segment,Premium,other
+target_price,model_Latitude 14 7000,0.0,0.0,segment,Premium,other
+target_price,model_XPS 13,0.0,0.0,segment,Premium,other
+target_price,model_Vivobook 15,0.0,0.0,segment,Premium,other
+target_price,model_Vostro,0.0,0.0,segment,Premium,other
+target_price,model_X Series,0.0,0.0,segment,Premium,other
+target_price,cpu_brand_Microsoft SQ,0.0,0.0,segment,Premium,brand
+target_price,model_Aspire,0.0,0.0,segment,Premium,other
+target_price,model_Latitude E Series,0.0,0.0,segment,Premium,other
+target_price,brand_Toshiba,0.0,0.0,segment,Premium,brand
+target_price,brand_Sony,0.0,0.0,segment,Premium,brand
+target_price,model_ThinkPad,0.0,0.0,segment,Premium,other
+target_price,model_TUF Gaming F15,0.0,0.0,segment,Premium,other
+target_price,model_TUF Gaming,0.0,0.0,segment,Premium,other
+target_price,model_MacBook Pro M2,0.0,0.0,segment,Premium,other
+target_price,model_Latitude,0.0,0.0,segment,Premium,other
+target_price,model_IdeaPad,0.0,0.0,segment,Premium,other
+target_price,model_MacBook Air M1,0.0,0.0,segment,Premium,other
+target_price,model_Gaming Thin GF,0.0,0.0,segment,Premium,other
+target_price,model_ROG Strix,0.0,0.0,segment,Premium,other
+target_price,model_Inspiron,0.0,0.0,segment,Premium,other
+target_price,model_Elitebook 800,0.0,0.0,segment,Premium,other
+target_price,model_Pavilion 15,0.0,0.0,segment,Premium,other
+target_price,model_ProBook,0.0,0.0,segment,Premium,other
+target_price,model_Elitebook,-0.00047597567092623195,0.001133210558984916,segment,Premium,other
+target_price,model_Nitro 5,-0.0006654702292191672,0.0001866930445225299,segment,Premium,other
+target_price,no_info_brand,-0.0018056356937755425,0.004989036862805809,segment,Premium,brand
+target_price,storage_missing,-0.0025657626177981287,0.0007422601813624113,segment,Premium,storage
+target_price,model_MacBook Pro,-0.0034486256315307885,0.007825732036870528,segment,Premium,other
+target_price,model_Precision,-0.0036355074353362936,0.0053029613465220985,segment,Premium,other
+target_price,no_info_storage,-0.02375753857259788,0.007385538220357136,segment,Premium,storage

@@ -85,3 +85,5 @@ artifacts/modeling_numeric/plots/
 artifacts/modeling_numeric/predictions/
 artifacts/modeling_numeric/target_comparison/
 artifacts/modeling_numeric/models/
+
+catboost_info/

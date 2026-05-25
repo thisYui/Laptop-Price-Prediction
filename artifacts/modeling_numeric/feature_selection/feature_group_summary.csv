@@ -1,0 +1,8 @@
+group,n_features,avg_missing_rate,high_missing_cols
+other,36,0.0,0
+brand,22,0.0,0
+gpu,6,0.0,0
+storage,5,0.0,0
+cpu,3,0.0,0
+ram,2,0.0,0
+screen,2,0.0,0
