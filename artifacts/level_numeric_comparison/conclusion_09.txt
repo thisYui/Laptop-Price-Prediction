@@ -1,30 +1,32 @@
+Final Recommendation
+====================
 
-=== KẾT LUẬN (Notebook 09) ===
+Primary candidate:
+  Model: LightGBM
+  Feature representation: numeric
+  Target: target_price
+  Evaluation scale: target_price
+  MAE: 3.2246
+  RMSE: 5.3365
+  R2: 0.8930
 
-1. Numeric hay level tốt hơn?
-   → Numeric encoding tốt hơn về MAE trung bình (chênh lệch ~1.6%).
-   Nếu mức chênh lệch này nhỏ hơn ngưỡng 3%, hai encoding được coi là tương đương
-   và nên chọn numeric vì đơn giản hơn trong pipeline.
+Recommended fine-tuning candidates:
+  1. LightGBM + target_price      [Primary candidate]
+  2. LightGBM + log_target_price  [MAE/MAPE alternative]
+  3. CatBoost + target_price      [Secondary boosting baseline]
+  4. CatBoost + log_target_price  [Target-strategy check]
 
-2. Log target hay target thường tốt hơn?
-   → log_target_price tốt hơn về MAE trung bình trên tất cả model và encoding.
-   log_target_price thắng MAE và MAPE nhất quán.
-   target_price chỉ tốt hơn về RMSE (ít bị ảnh hưởng bởi outlier laptop đắt tiền).
+Decision:
+  target_price is selected as the primary target because it provides
+  better balanced performance on the original price scale. log_target_price
+  is retained as a secondary candidate because it may slightly improve MAE/MAPE.
 
-3. Model nào nên fine-tune tiếp?
-   → Candidate chính: CatBoost + numeric + log_target_price
-     MAE=3.4317, MAPE=0.2884, RMSE=5.6352
+Notebook 10 handoff:
+  Start with LightGBM + target_price on numeric feature representation.
+  Then compare against LightGBM + log_target_price, CatBoost + target_price,
+  and CatBoost + log_target_price using the same split or cross-validation.
 
-4. Có cần giữ candidate target_price để kiểm tra phân khúc giá cao không?
-   → Có. CatBoost + level + target_price
-     (RMSE=5.5103) nên được giữ làm candidate đối chứng vì
-     target_price cho kết quả tốt hơn ở phân khúc Premium (>28M VND).
-
-Tóm tắt:
-   Dựa trên MAE là metric chính, cấu hình tốt nhất là
-   CatBoost + numeric + log_target_price.
-   Cấu hình này được chọn vì có MAE/MAPE tốt nhất hoặc gần tốt nhất,
-   trong khi RMSE không bị đánh đổi quá lớn.
-   Tuy nhiên, do target_price có thể tốt hơn về RMSE,
-   nên vẫn giữ CatBoost + level + target_price
-   làm candidate đối chứng trong bước fine-tuning tiếp theo.
+Next step:
+  Tune LightGBM + target_price first, then compare against the secondary candidates
+  using cross-validation and residual analysis by price_range, brand, CPU tier,
+  GPU type, condition, and warranty.
