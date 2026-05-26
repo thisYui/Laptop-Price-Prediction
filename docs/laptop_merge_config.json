@@ -28,9 +28,13 @@
     "ram_gb",
     "storage_gb",
     "screen_size_inch",
+    "cpu_name_raw",
+    "cpu_type",
+    "cpu_model_clean",
     "cpu_brand",
     "cpu_tier",
     "gpu_tier",
+    "gpu_tier_v2",
     "storage_type_clean",
     "condition_clean",
     "warranty_months",
@@ -108,6 +112,7 @@
       "_ram_gb_filled": "ram_gb",
       "_storage_gb_filled": "storage_gb",
       "_screen_size_inch_filled": "screen_size_inch",
+      "_title_cpu": "cpu_name_raw",
       "cpu_brand": "cpu_brand",
       "cpu_tier": "cpu_tier",
       "gpu_tier": "gpu_tier",
@@ -137,9 +142,13 @@
       "ram_gb_clean": "ram_gb",
       "storage_gb_clean": "storage_gb",
       "screen_size_clean": "screen_size_inch",
+      "Công nghệ CPU": "cpu_name_raw",
+      "Loại CPU": "cpu_type",
+      "cpu_model_clean": "cpu_model_clean",
       "cpu_brand": "cpu_brand",
       "cpu_tier": "cpu_tier",
       "gpu_tier_v2": "gpu_tier",
+      "gpu_tier_v2_raw": "gpu_tier_v2",
       "storage_type_clean": "storage_type_clean",
       "price_spread_clean_pct": "price_spread_clean_pct",
       "flag_price_spread_warn": "flag_price_spread_warn",
@@ -294,7 +303,7 @@
   },
   "final_shape": [
     10080,
-    44
+    48
   ],
   "target_summary_by_source": [
     {
@@ -387,6 +396,26 @@
     },
     {
       "check": "target_price_source is not missing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "new CPU/GPU merge columns exist",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "check": "Chợ Tốt cpu_type is NaN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "Chợ Tốt cpu_model_clean is NaN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "Chợ Tốt gpu_tier_v2 is NaN",
       "passed": true,
       "detail": ""
     }
