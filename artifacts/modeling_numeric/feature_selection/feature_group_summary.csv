@@ -1,5 +1,5 @@
 group,n_features,avg_missing_rate,high_missing_cols
-other,36,0.0,0
+other,35,0.0,0
 brand,22,0.0,0
 gpu,6,0.0,0
 storage,5,0.0,0

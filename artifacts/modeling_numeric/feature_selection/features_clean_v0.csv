@@ -15,7 +15,6 @@ no_info_gpu
 storage_ssd
 storage_hdd
 no_info_storage
-no_info_condition
 condition_score
 warranty_encoded
 cpu_tier_encoded

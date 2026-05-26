@@ -1,5 +1,5 @@
 rank,model_name,encoding_type,target_used,rmse,mae,mape,r2,role,reason
-1,CatBoost,numeric,log_target_price,5.6352132513278015,3.4316641708244653,0.2884409250888934,0.857534904969742,main_candidate,MAE/MAPE tốt nhất; cấu hình được fine-tune trong notebook 10
-2,CatBoost,level,target_price,5.510256635491748,3.537225648973906,0.3361012041256254,0.8637829679515091,rmse_control_candidate,RMSE thấp nhất; giữ để kiểm tra outlier và laptop giá cao
-3,LightGBM,numeric,log_target_price,5.76437741030448,3.4507357734399524,0.2889051779421001,0.8509292020457647,secondary_candidate,Model mạnh thứ hai; xác nhận pattern không chỉ đúng với CatBoost
-4,CatBoost,numeric,target_price,5.514597447136053,3.48868111053997,0.328528308809212,0.8635682681946507,optional_candidate,Backup; có thể bỏ nếu tài nguyên hạn chế
+1,LightGBM,numeric,log_target_price,5.763276627073994,3.437482999349503,0.289255088795379,0.8509861306452843,main_candidate,MAE/MAPE tốt nhất; cấu hình được fine-tune trong notebook 10
+2,CatBoost,numeric,target_price,5.478544130592721,3.4704545903448647,0.3301503328968136,0.8653463625522804,rmse_control_candidate,RMSE thấp nhất; giữ để kiểm tra outlier và laptop giá cao
+3,CatBoost,numeric,log_target_price,5.643442192007468,3.445520869441193,0.2899267782555794,0.8571185257739394,secondary_candidate,Model mạnh thứ hai; xác nhận pattern không chỉ đúng với CatBoost
+4,LightGBM,level,log_target_price,5.808076057897487,3.4950376437668846,0.2963231566340092,0.848660480473112,optional_candidate,Backup; có thể bỏ nếu tài nguyên hạn chế
