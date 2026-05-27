@@ -85,6 +85,12 @@ artifacts/modeling_numeric/plots/
 artifacts/modeling_numeric/predictions/
 artifacts/modeling_numeric/target_comparison/
 artifacts/modeling_numeric/models/
+artifacts/modeling_final/feature_importance/
+artifacts/modeling_final/model_diagnostics/
+artifacts/modeling_final/plots/
+artifacts/modeling_final/predictions/
+artifacts/modeling_final/target_comparison/
+artifacts/modeling_final/models/
 
 catboost_info/
 feature_selection/
