@@ -1,5 +1,5 @@
 # ============================================================
-# CatBoost Experiment Function Implementations
+# LightGBM Experiment Function Implementations
 # ============================================================
 # Designed to plug directly into notebook 07b_modeling_numeric_copy.ipynb
 # - Targets: "target_price" hoặc "log_target_price"
@@ -12,11 +12,11 @@ from __future__ import annotations
 import warnings
 from typing import Optional
 
+import lightgbm as lgb
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from catboost import CatBoostRegressor, Pool
 from sklearn.metrics import (
     mean_absolute_error,
     mean_absolute_percentage_error,
@@ -34,18 +34,18 @@ except ImportError:
 
 
 # ─────────────────────────────────────────────
-# 1. Build CatBoost model
+# 1. Build LightGBM model
 # ─────────────────────────────────────────────
-def build_catboost_model(
+def build_lightgbm_model(
     params: dict | None = None,
     random_state: int = 42,
     verbose: bool | int = False,
-) -> CatBoostRegressor:
+) -> lgb.LGBMRegressor:
     """
-    Tạo CatBoostRegressor với params mặc định hoặc params tự truyền vào.
+    Tạo LGBMRegressor với params mặc định hoặc params tự truyền vào.
 
     Default params được chọn consistent với các model khác trong notebook
-    (iterations=500, learning_rate=0.05, depth=6) để so sánh công bằng.
+    (n_estimators=500, learning_rate=0.05, max_depth=6) để so sánh công bằng.
 
     Parameters
     ----------
@@ -55,34 +55,35 @@ def build_catboost_model(
     random_state : int
         Seed để đảm bảo reproducibility.
     verbose : bool or int
-        Điều khiển log training. False = tắt hoàn toàn.
+        Điều khiển log training. False = tắt hoàn toàn (-1).
 
     Returns
     -------
-    model : CatBoostRegressor
+    model : LGBMRegressor
         Model chưa train.
     """
+    verbosity = -1 if verbose is False else (1 if verbose is True else int(verbose))
+
     default_params = {
-        "iterations": 500,
+        "n_estimators": 500,
         "learning_rate": 0.05,
-        "depth": 6,
-        "loss_function": "RMSE",
-        "eval_metric": "RMSE",
-        "random_seed": random_state,
-        "verbose": 0 if verbose is False else verbose,
-        "allow_writing_files": False,   # không tạo rác catboost_info/
+        "max_depth": 6,
+        "num_leaves": 63,          # 2^(max_depth) - 1, consistent với depth=6
+        "objective": "regression",
+        "metric": "rmse",
+        "random_state": random_state,
+        "verbosity": verbosity,
+        "n_jobs": -1,
     }
 
     if params is not None:
-        # Cho phép override từng key, giữ các key còn lại
         merged = {**default_params, **params}
-        # Đồng bộ random_seed nếu caller truyền random_state ở ngoài
-        if "random_seed" not in params:
-            merged["random_seed"] = random_state
+        if "random_state" not in params:
+            merged["random_state"] = random_state
     else:
         merged = default_params
 
-    return CatBoostRegressor(**merged)
+    return lgb.LGBMRegressor(**merged)
 
 
 # ─────────────────────────────────────────────
@@ -136,27 +137,26 @@ def make_train_test_data(
 
 
 # ─────────────────────────────────────────────
-# 3. Train one CatBoost model
+# 3. Train one LightGBM model
 # ─────────────────────────────────────────────
-def train_catboost_model(
-    model: CatBoostRegressor,
+def train_lightgbm_model(
+    model: lgb.LGBMRegressor,
     X_train: pd.DataFrame,
     y_train: pd.Series,
     X_valid: pd.DataFrame | None = None,
     y_valid: pd.Series | None = None,
     sample_weight: np.ndarray | None = None,
     early_stopping_rounds: int | None = None,
-) -> CatBoostRegressor:
+) -> lgb.LGBMRegressor:
     """
-    Train một CatBoostRegressor.
+    Train một LGBMRegressor.
 
-    CatBoost dùng Pool để nhận sample_weight và eval_set hiệu quả hơn
-    so với truyền thẳng array.
+    LightGBM nhận eval_set và callbacks qua fit() — không dùng Pool như CatBoost.
 
     Parameters
     ----------
-    model : CatBoostRegressor
-        Model đã khởi tạo (từ build_catboost_model).
+    model : LGBMRegressor
+        Model đã khởi tạo (từ build_lightgbm_model).
     X_train : pd.DataFrame
         Feature train.
     y_train : pd.Series
@@ -173,21 +173,24 @@ def train_catboost_model(
 
     Returns
     -------
-    model : CatBoostRegressor
+    model : LGBMRegressor
         Model sau khi đã fit.
     """
-    train_pool = Pool(data=X_train, label=y_train, weight=sample_weight)
-
     fit_kwargs: dict = {}
 
+    if sample_weight is not None:
+        fit_kwargs["sample_weight"] = sample_weight
+
     if X_valid is not None and y_valid is not None:
-        eval_pool = Pool(data=X_valid, label=y_valid)
-        fit_kwargs["eval_set"] = eval_pool
+        fit_kwargs["eval_set"] = [(X_valid, y_valid)]
 
-    if early_stopping_rounds is not None:
-        fit_kwargs["early_stopping_rounds"] = early_stopping_rounds
+        if early_stopping_rounds is not None:
+            fit_kwargs["callbacks"] = [
+                lgb.early_stopping(stopping_rounds=early_stopping_rounds, verbose=False),
+                lgb.log_evaluation(period=-1),   # tắt log verbose trong callback
+            ]
 
-    model.fit(train_pool, **fit_kwargs)
+    model.fit(X_train, y_train, **fit_kwargs)
     return model
 
 
@@ -279,10 +282,10 @@ def compute_regression_metrics(
     median_ape_pct = float(np.median(ape))
 
     return {
-        "mae":        float(mean_absolute_error(y_true, y_pred)),
-        "rmse":       float(root_mean_squared_error(y_true, y_pred)),
-        "r2":         float(r2_score(y_true, y_pred)),
-        "mape_pct":   float(mape_pct),
+        "mae":            float(mean_absolute_error(y_true, y_pred)),
+        "rmse":           float(root_mean_squared_error(y_true, y_pred)),
+        "r2":             float(r2_score(y_true, y_pred)),
+        "mape_pct":       float(mape_pct),
         "median_ape_pct": median_ape_pct,
     }
 
@@ -370,7 +373,7 @@ def build_prediction_frame(
     Parameters
     ----------
     experiment_name : str
-        Tên experiment (ví dụ: "CatBoost_log1p_v1").
+        Tên experiment (ví dụ: "LightGBM_log1p_v1").
     target_name : str
         "target_price" hoặc "log_target_price".
     y_true_price : array-like
@@ -489,7 +492,7 @@ def plot_true_vs_predicted(
 # Convenience: run a full experiment in one call
 # ─────────────────────────────────────────────
 
-def run_catboost_experiment(
+def run_lightgbm_experiment(
     experiment_name: str,
     X_train: pd.DataFrame,
     y_train: pd.Series,
@@ -506,7 +509,7 @@ def run_catboost_experiment(
     verbose: bool = False,
 ) -> dict:
     """
-    Chạy một experiment CatBoost end-to-end.
+    Chạy một experiment LightGBM end-to-end.
 
     Workflow:
         build model
@@ -522,9 +525,9 @@ def run_catboost_experiment(
     ----------
     experiment_name : str
         Tên experiment, ví dụ:
-        - "catboost_log_baseline"
-        - "catboost_log_onehot_warranty"
-        - "catboost_log_drop_low_importance"
+        - "lightgbm_log_baseline"
+        - "lightgbm_log_onehot_warranty"
+        - "lightgbm_log_drop_low_importance"
 
     X_train : pd.DataFrame
         Feature train.
@@ -553,7 +556,7 @@ def run_catboost_experiment(
         Dùng để inverse prediction nếu target_name = "log_target_price".
 
     model_params : dict or None
-        Hyperparameters cho CatBoost.
+        Hyperparameters cho LightGBM.
 
     segment_labels_test : array-like or None
         Segment của test set, ví dụ Low / Medium / High / Premium.
@@ -569,7 +572,7 @@ def run_catboost_experiment(
         Có vẽ scatter actual vs predicted hay không.
 
     verbose : bool or int
-        Log training CatBoost.
+        Log training LightGBM.
 
     Returns
     -------
@@ -581,6 +584,7 @@ def run_catboost_experiment(
         - pred_df
         - raw_pred
         - y_pred_price
+        - feature_names
     """
 
     # ------------------------------------------------------------
@@ -615,7 +619,7 @@ def run_catboost_experiment(
     # 2. Build model
     # ------------------------------------------------------------
 
-    model = build_catboost_model(
+    model = build_lightgbm_model(
         params=model_params,
         verbose=verbose,
     )
@@ -624,26 +628,15 @@ def run_catboost_experiment(
     # 3. Train model
     # ------------------------------------------------------------
 
-    if early_stopping_rounds is not None:
-        model = train_catboost_model(
-            model=model,
-            X_train=X_train,
-            y_train=y_train,
-            X_valid=X_test,
-            y_valid=y_test,
-            sample_weight=sample_weight,
-            early_stopping_rounds=early_stopping_rounds,
-        )
-    else:
-        model = train_catboost_model(
-            model=model,
-            X_train=X_train,
-            y_train=y_train,
-            X_valid=None,
-            y_valid=None,
-            sample_weight=sample_weight,
-            early_stopping_rounds=None,
-        )
+    model = train_lightgbm_model(
+        model=model,
+        X_train=X_train,
+        y_train=y_train,
+        X_valid=X_test if early_stopping_rounds is not None else None,
+        y_valid=y_test  if early_stopping_rounds is not None else None,
+        sample_weight=sample_weight,
+        early_stopping_rounds=early_stopping_rounds,
+    )
 
     # ------------------------------------------------------------
     # 4. Predict
@@ -725,12 +718,12 @@ def run_catboost_experiment(
 
     return {
         "experiment_name": experiment_name,
-        "target_name": target_name,
-        "model": model,
-        "metrics": metrics,
+        "target_name":     target_name,
+        "model":           model,
+        "metrics":         metrics,
         "segment_metrics": segment_metrics,
-        "pred_df": pred_df,
-        "raw_pred": raw_pred,
-        "y_pred_price": y_pred_price,
-        "feature_names": X_train.columns.tolist(),
+        "pred_df":         pred_df,
+        "raw_pred":        raw_pred,
+        "y_pred_price":    y_pred_price,
+        "feature_names":   X_train.columns.tolist(),
     }

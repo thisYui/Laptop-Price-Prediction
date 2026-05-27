@@ -1,8 +1,8 @@
 check,status,detail
 Processed dataset exists,PASS,Y:\Python\Laptop-Price-Prediction\data\processed\laptop_processed_numeric.csv
 Target columns,PASS,missing=[]
-Feature count,PASS,n_features=75
-Numeric feature count,PASS,n_numeric=75
+Feature count,PASS,n_features=86
+Numeric feature count,PASS,n_numeric=86
 Metrics loaded,PASS,Y:\Python\Laptop-Price-Prediction\artifacts\modeling_numeric\metrics\model_metrics.csv
 Predictions loaded,PASS,Y:\Python\Laptop-Price-Prediction\artifacts\modeling_numeric\predictions\test_predictions.csv
 Diagnostics loaded,PASS,Y:\Python\Laptop-Price-Prediction\artifacts\modeling_numeric\model_diagnostics\diagnostic_errors_long.csv

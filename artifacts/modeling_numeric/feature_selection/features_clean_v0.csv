@@ -69,6 +69,17 @@ cpu_brand_Intel
 cpu_brand_Microsoft SQ
 cpu_brand_Other
 cpu_brand_Qualcomm
+cpu_family_ord_filled
+cpu_family_group_AMD Ryzen
+cpu_family_group_Apple Silicon
+cpu_family_group_Intel Core Ultra
+cpu_family_group_Intel Core i
+cpu_family_group_Intel Low End
+cpu_intel_generation_ord
+cpu_amd_generation_ord
+cpu_apple_core_spec
+cpu_qualcomm_snapdragon_spec
+cpu_suffix_power_ord_filled
 gpu_tier_ord_filled
 gpu_type_Apple SoC
 gpu_type_Dedicated
