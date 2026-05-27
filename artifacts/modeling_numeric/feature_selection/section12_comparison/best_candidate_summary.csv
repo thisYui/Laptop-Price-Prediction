@@ -1,0 +1,6 @@
+selection,feature_case,experiment_name,target_name,mae,rmse,r2,mape_pct,source_cell,delta_mae_vs_baseline,delta_rmse_vs_baseline,delta_r2_vs_baseline,delta_mape_vs_baseline,better_rmse_than_baseline,better_mae_than_baseline,better_mape_than_baseline,better_r2_than_baseline,beats_baseline_metric_count
+baseline,baseline,baseline,target_price,3.2019,5.0768,0.8874,31.0916,52,0.0,0.0,0.0,0.0,False,False,False,False,0
+best_by_rmse,rs2_ram_storage_interactions,rs2_ram_storage_interactions,target_price,3.1852,5.041,0.889,30.6421,73,-0.01670000000000016,-0.035800000000000054,0.0016000000000000458,-0.44950000000000045,True,True,True,True,4
+best_by_mae,rs2_ram_storage_interactions,rs2_ram_storage_interactions,target_price,3.1852,5.041,0.889,30.6421,73,-0.01670000000000016,-0.035800000000000054,0.0016000000000000458,-0.44950000000000045,True,True,True,True,4
+best_by_mape,rs2_ram_storage_interactions,rs2_ram_storage_interactions,target_price,3.1852,5.041,0.889,30.6421,73,-0.01670000000000016,-0.035800000000000054,0.0016000000000000458,-0.44950000000000045,True,True,True,True,4
+best_balanced,rs2_ram_storage_interactions,rs2_ram_storage_interactions,target_price,3.1852,5.041,0.889,30.6421,73,-0.01670000000000016,-0.035800000000000054,0.0016000000000000458,-0.44950000000000045,True,True,True,True,4
