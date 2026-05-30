@@ -11,6 +11,7 @@ import unicodedata
 import pandas as pd
 
 from .cpu_parser import parse_cpu
+from .encoder_validation import validate_encoded_output, validate_input_rows
 from .feature_maps import BRAND_ALIASES, CONDITION_SCORE_MAP, FINAL_BRANDS
 from .gpu_parser import parse_gpu_tier
 
@@ -50,10 +51,18 @@ class LaptopFeatureEncoder:
 
     def encode_many(self, rows: list[dict] | pd.DataFrame) -> pd.DataFrame:
         """Encode many raw structured laptop rows into a numeric DataFrame."""
+        if isinstance(rows, dict):
+            raise TypeError(
+                "encode_many expects a list of dicts or a DataFrame. "
+                "Use encode_one for a single dict."
+            )
+
         if isinstance(rows, pd.DataFrame):
             raw_rows = rows.to_dict(orient="records")
         else:
             raw_rows = list(rows)
+
+        validate_input_rows(raw_rows)
 
         encoded_rows = [self._encode_row(row) for row in raw_rows]
         frame = pd.DataFrame(encoded_rows)
@@ -231,29 +240,11 @@ class LaptopFeatureEncoder:
         features["is_premium_memory_storage"] = int(ram >= 32 and storage >= 1024)
 
     def _align_and_validate(self, frame: pd.DataFrame) -> pd.DataFrame:
-        missing = [col for col in self.feature_names if col not in frame.columns]
-        if missing:
-            raise ValueError(f"Encoder failed to create final features: {missing}")
-
-        X = frame.reindex(columns=self.feature_names)
-        if X.shape[1] != self.n_features:
-            raise ValueError(f"Expected {self.n_features} columns, got {X.shape[1]}.")
-
-        for col in X.columns:
-            X[col] = pd.to_numeric(X[col], errors="raise")
-
-        if X.isna().any().any():
-            na_counts = X.isna().sum()
-            raise ValueError(f"Encoded output contains NaN values: {na_counts[na_counts > 0].to_dict()}")
-
-        object_cols = X.select_dtypes(include=["object", "category", "string"]).columns.tolist()
-        if object_cols:
-            raise ValueError(f"Encoded output contains non-numeric columns: {object_cols}")
-
-        if X.columns.tolist() != self.feature_names:
-            raise ValueError("Encoded columns do not match the schema feature order.")
-
-        return X
+        return validate_encoded_output(
+            frame,
+            feature_names=self.feature_names,
+            n_features=self.n_features,
+        )
 
 
 def normalize_text(value: Any) -> str | None:
