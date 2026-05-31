@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laptop Price Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <nav class="nav-shell" aria-label="Điều hướng chính">
+        <a class="brand-lockup" href="#top" aria-label="Laptop Price Studio">
+          <span>LP</span>
+          <strong>Price Studio</strong>
+        </a>
+        <div class="nav-links">
+          <a href="#input">Nhập máy</a>
+          <a href="#result">Kết quả</a>
+          <a href="#json">JSON</a>
+        </div>
+        <div class="nav-status">
+          <span id="healthStatus">Đang kiểm tra</span>
+        </div>
+      </nav>
+
+      <header id="top" class="hero-section">
+        <div class="hero-copy">
+          <p class="eyebrow">Gemini 2.5 Flash · Encoder · CatBoost</p>
+          <h1>
+            Nhập cấu hình
+            <span class="inline-chip">JSON</span>
+            nhận giá dự đoán.
+          </h1>
+          <p class="hero-text" id="healthDetail">
+            Mode LLM dùng GEMINI_API_KEY; mode thủ công chỉ dùng encoder và model local.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="#input">Bắt đầu nhập</a>
+            <button class="secondary-link" id="fillExample" type="button">Điền mẫu</button>
+          </div>
+        </div>
+        <div class="hero-diagram" aria-hidden="true">
+          <div class="pipeline-node">Gemini</div>
+          <div class="pipeline-line"></div>
+          <div class="pipeline-node">Raw JSON</div>
+          <div class="pipeline-line"></div>
+          <div class="pipeline-node">Encoder</div>
+          <div class="pipeline-line"></div>
+          <div class="pipeline-node">Price</div>
+        </div>
+      </header>
+
+      <section id="input" class="studio-grid">
+        <form id="predictForm" class="input-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker">Đầu vào</p>
+              <h2>Chọn cách nhập thông tin máy.</h2>
+            </div>
+            <div class="mode-toggle" role="radiogroup" aria-label="Chế độ dự đoán">
+              <label>
+                <input type="radio" name="mode" value="text" checked />
+                <span>LLM</span>
+              </label>
+              <label>
+                <input type="radio" name="mode" value="manual" />
+                <span>Thủ công</span>
+              </label>
+            </div>
+          </div>
+
+          <label class="field wide text-mode-only">
+            <span>Mô tả tự nhiên</span>
+            <textarea
+              id="description"
+              rows="6"
+              placeholder="Dell Inspiron 15, Intel Core i5-1235U, RAM 16GB, SSD 512GB, màn 15.6 inch, card Intel Integrated, đã sử dụng chưa sửa chữa, hết bảo hành"
+            ></textarea>
+          </label>
+
+          <div class="field-grid manual-mode-only">
+            <label class="field">
+              <span>Hãng</span>
+              <input id="brand" placeholder="Dell" />
+            </label>
+            <label class="field">
+              <span>Dòng máy</span>
+              <input id="model" placeholder="Inspiron" />
+            </label>
+            <label class="field">
+              <span>RAM (GB)</span>
+              <input id="ram_gb" type="number" min="0" max="512" step="1" placeholder="16" />
+            </label>
+            <label class="field">
+              <span>Ổ cứng (GB)</span>
+              <input id="storage_gb" type="number" min="0" max="100000" step="1" placeholder="512" />
+            </label>
+            <label class="field">
+              <span>Loại ổ cứng</span>
+              <select id="storage_type">
+                <option value="">Không rõ</option>
+                <option>SSD</option>
+                <option>NVMe SSD</option>
+                <option>HDD</option>
+                <option>SSD + HDD</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Màn hình (inch)</span>
+              <input id="screen_size_inch" type="number" min="0" max="30" step="0.1" placeholder="15.6" />
+            </label>
+            <label class="field wide">
+              <span>CPU</span>
+              <input id="cpu_text" placeholder="Intel Core i5-1235U" />
+            </label>
+            <label class="field">
+              <span>CPU brand</span>
+              <select id="cpu_brand">
+                <option value="">Tự parse / Không rõ</option>
+                <option>Intel</option>
+                <option>AMD</option>
+                <option>Apple</option>
+                <option>Qualcomm</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>CPU family</span>
+              <input id="cpu_family" placeholder="Intel Core i5" />
+            </label>
+            <label class="field">
+              <span>Đời CPU</span>
+              <input id="cpu_generation" type="number" min="0" step="1" placeholder="12" />
+            </label>
+            <label class="field">
+              <span>CPU suffix</span>
+              <input id="cpu_suffix" placeholder="U" />
+            </label>
+            <label class="field wide">
+              <span>GPU</span>
+              <input id="gpu_text" placeholder="integrated hoặc RTX 4060" />
+            </label>
+            <label class="field">
+              <span>Tình trạng</span>
+              <select id="condition">
+                <option value="">Không nhập</option>
+                <option value="new">Mới / Unknown</option>
+                <option value="like new">Like new</option>
+                <option value="good">Đã dùng, chưa sửa</option>
+                <option value="da su dung qua sua chua">Đã qua sửa chữa</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Bảo hành</span>
+              <select id="warranty_status">
+                <option value="">Không rõ</option>
+                <option value="active">Còn bảo hành</option>
+                <option value="expired">Hết bảo hành</option>
+                <option value="not activated">Chưa kích hoạt</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="primary-button" type="submit">Dự đoán giá</button>
+            <button class="ghost-button" type="button" id="clearForm">Xóa form</button>
+          </div>
+        </form>
+
+        <aside id="result" class="result-panel">
+          <div class="result-head">
+            <span>Kết quả</span>
+            <strong id="runState">Chưa chạy</strong>
+          </div>
+          <div class="price-box">
+            <span>Giá dự đoán</span>
+            <strong id="predictedPrice">--</strong>
+            <small>Đơn vị theo target của model metadata.</small>
+          </div>
+          <div class="validation-box">
+            <h3>Validation</h3>
+            <ul id="validationList">
+              <li>Chờ dữ liệu đầu vào.</li>
+            </ul>
+          </div>
+          <div class="feature-box">
+            <h3>Feature đang bật</h3>
+            <div id="activeFeatures" class="chip-list">
+              <span>Chưa có</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="interest-grid" aria-label="Luồng xử lý">
+        <article class="process-card process-wide">
+          <div>
+            <h2>Một luồng nhập liệu, hai cách kiểm soát.</h2>
+            <p>LLM trích xuất raw JSON từ mô tả; nhập thủ công bỏ qua API ngoài và chạy thẳng encoder local.</p>
+          </div>
+        </article>
+        <article class="process-card">
+          <h3>Validate</h3>
+          <p>Raw fields đi qua encoder_validation.py trước khi tạo feature matrix.</p>
+        </article>
+        <article class="process-card">
+          <h3>Encode</h3>
+          <p>Schema cuối giữ đúng 86 cột theo thứ tự model yêu cầu.</p>
+        </article>
+        <article class="process-card">
+          <h3>Predict</h3>
+          <p>Model full-data trả về prediction và danh sách feature đang bật.</p>
+        </article>
+      </section>
+
+      <section class="desire-section">
+        <div class="desire-copy">
+          <h2>JSON rõ ràng giúp debug prediction nhanh hơn.</h2>
+        </div>
+        <div id="json" class="json-grid">
+          <article class="json-card">
+            <div class="card-title">
+              <h2>Raw JSON từ LLM / form</h2>
+              <button type="button" data-copy="rawJson">Copy</button>
+            </div>
+            <pre id="rawJson">{}</pre>
+          </article>
+          <article class="json-card">
+            <div class="card-title">
+              <h2>Encoded JSON cho model</h2>
+              <button type="button" data-copy="encodedJson">Copy</button>
+            </div>
+            <pre id="encodedJson">{}</pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="accordion-band" aria-label="Các tín hiệu chính">
+        <article class="accordion-item active">
+          <div>
+            <h3>RAM · Storage</h3>
+            <p>Dung lượng được chuẩn hóa về GB trước khi tính interaction.</p>
+          </div>
+        </article>
+        <article class="accordion-item">
+          <div>
+            <h3>CPU · GPU</h3>
+            <p>Text phần cứng được parse thành brand, family, generation, suffix và tier.</p>
+          </div>
+        </article>
+        <article class="accordion-item">
+          <div>
+            <h3>Tình trạng</h3>
+            <p>New và unknown được đưa về score 3; like new và máy tốt về score 2.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="reveal-section">
+        <p class="scrub-text">
+          Khi prediction lệch, hãy nhìn raw JSON trước, rồi kiểm tra encoded JSON để biết LLM, encoder hay dữ liệu đầu vào đang tạo ra khác biệt.
+        </p>
+      </section>
+
+      <footer class="footer-cta">
+        <p>Mode LLM cần GEMINI_API_KEY. Mode thủ công không gọi API ngoài.</p>
+        <a href="#input">Quay lại nhập liệu</a>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -130,13 +130,19 @@ CPU_TIER_LOOKUP: dict[tuple[str, str, str], str] = {
 CONDITION_SCORE_MAP: dict[str, int] = {
     "poor": 1,
     "fair": 1,
-    "good": 2,
-    "like new": 3,
-    "like_new": 3,
-    "new": 3,
+    "repaired": 1,
+    "da sua chua": 1,
     "da su dung qua sua chua": 1,
+    "good": 2,
+    "used": 2,
+    "like new": 2,
+    "like_new": 2,
+    "da mua": 2,
     "da su dung chua sua chua": 2,
+    "new": 3,
     "moi": 3,
+    "unknown": 3,
+    "unknow": 3,
 }
 
 FINAL_BRANDS: tuple[str, ...] = (
