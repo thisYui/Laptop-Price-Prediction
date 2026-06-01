@@ -14,45 +14,26 @@
   </head>
   <body>
     <main class="page-shell">
-      <nav class="nav-shell" aria-label="Điều hướng chính">
-        <a class="brand-lockup" href="#top" aria-label="Laptop Price Studio">
-          <span>LP</span>
-          <strong>Price Studio</strong>
-        </a>
-        <div class="nav-links">
-          <a href="#input">Nhập máy</a>
-          <a href="#result">Kết quả</a>
-          <a href="#json">JSON</a>
-        </div>
-        <div class="nav-status">
-          <span id="healthStatus">Đang kiểm tra</span>
-        </div>
-      </nav>
-
       <header id="top" class="hero-section">
+        <div class="hero-topline">
+          <a class="brand-lockup" href="#top" aria-label="Laptop Price Studio">
+            <span>LP</span>
+            <strong>Price Studio</strong>
+          </a>
+          <div class="nav-status">
+            <span id="healthStatus">Đang kiểm tra</span>
+          </div>
+        </div>
         <div class="hero-copy">
           <p class="eyebrow">Gemini 2.5 Flash · Encoder · CatBoost</p>
           <h1>
             Nhập cấu hình
-            <span class="inline-chip">JSON</span>
             nhận giá dự đoán.
           </h1>
-          <p class="hero-text" id="healthDetail">
-            Mode LLM dùng GEMINI_API_KEY; mode thủ công chỉ dùng encoder và model local.
-          </p>
           <div class="hero-actions">
             <a class="primary-link" href="#input">Bắt đầu nhập</a>
             <button class="secondary-link" id="fillExample" type="button">Điền mẫu</button>
           </div>
-        </div>
-        <div class="hero-diagram" aria-hidden="true">
-          <div class="pipeline-node">Gemini</div>
-          <div class="pipeline-line"></div>
-          <div class="pipeline-node">Raw JSON</div>
-          <div class="pipeline-line"></div>
-          <div class="pipeline-node">Encoder</div>
-          <div class="pipeline-line"></div>
-          <div class="pipeline-node">Price</div>
         </div>
       </header>
 
@@ -149,7 +130,7 @@
               <span>Tình trạng</span>
               <select id="condition">
                 <option value="">Không nhập</option>
-                <option value="new">Mới / Unknown</option>
+                <option value="new">Mới</option>
                 <option value="like new">Like new</option>
                 <option value="good">Đã dùng, chưa sửa</option>
                 <option value="da su dung qua sua chua">Đã qua sửa chữa</option>
@@ -179,22 +160,15 @@
             <span>Kết quả</span>
             <strong id="runState">Chưa chạy</strong>
           </div>
-          <div class="price-box">
-            <span>Giá dự đoán</span>
-            <strong id="predictedPrice">--</strong>
-            <small>Đơn vị theo target của model metadata.</small>
-          </div>
+            <div class="price-box">
+              <span>Giá dự đoán</span>
+              <strong id="predictedPrice">--</strong>
+            </div>
           <div class="validation-box">
-            <h3>Validation</h3>
+            <h3>Trạng thái xử lý</h3>
             <ul id="validationList">
               <li>Chờ dữ liệu đầu vào.</li>
             </ul>
-          </div>
-          <div class="feature-box">
-            <h3>Feature đang bật</h3>
-            <div id="activeFeatures" class="chip-list">
-              <span>Chưa có</span>
-            </div>
           </div>
         </aside>
       </section>
@@ -207,39 +181,17 @@
           </div>
         </article>
         <article class="process-card">
-          <h3>Validate</h3>
-          <p>Raw fields đi qua encoder_validation.py trước khi tạo feature matrix.</p>
+          <h3>Kiểm tra</h3>
+          <p>Hệ thống kiểm tra các giá trị quan trọng như RAM, ổ cứng và kích thước màn hình.</p>
         </article>
         <article class="process-card">
-          <h3>Encode</h3>
-          <p>Schema cuối giữ đúng 86 cột theo thứ tự model yêu cầu.</p>
+          <h3>Chuẩn hóa</h3>
+          <p>Thông tin máy được chuyển về dạng mà model dự đoán giá có thể đọc được.</p>
         </article>
         <article class="process-card">
-          <h3>Predict</h3>
-          <p>Model full-data trả về prediction và danh sách feature đang bật.</p>
+          <h3>Dự đoán</h3>
+          <p>Model trả về giá tham khảo dựa trên cấu hình và tình trạng máy.</p>
         </article>
-      </section>
-
-      <section class="desire-section">
-        <div class="desire-copy">
-          <h2>JSON rõ ràng giúp debug prediction nhanh hơn.</h2>
-        </div>
-        <div id="json" class="json-grid">
-          <article class="json-card">
-            <div class="card-title">
-              <h2>Raw JSON từ LLM / form</h2>
-              <button type="button" data-copy="rawJson">Copy</button>
-            </div>
-            <pre id="rawJson">{}</pre>
-          </article>
-          <article class="json-card">
-            <div class="card-title">
-              <h2>Encoded JSON cho model</h2>
-              <button type="button" data-copy="encodedJson">Copy</button>
-            </div>
-            <pre id="encodedJson">{}</pre>
-          </article>
-        </div>
       </section>
 
       <section class="accordion-band" aria-label="Các tín hiệu chính">
@@ -265,7 +217,7 @@
 
       <section class="reveal-section">
         <p class="scrub-text">
-          Khi prediction lệch, hãy nhìn raw JSON trước, rồi kiểm tra encoded JSON để biết LLM, encoder hay dữ liệu đầu vào đang tạo ra khác biệt.
+          Giá dự đoán là mức tham khảo theo dữ liệu huấn luyện; hãy đối chiếu thêm ngoại hình, pin, bảo hành và độ uy tín người bán trước khi quyết định.
         </p>
       </section>
 
@@ -277,6 +229,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=20260601-health-fallback"></script>
   </body>
 </html>

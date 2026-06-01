@@ -40,12 +40,63 @@ const form = document.querySelector("#predictForm");
 const runState = document.querySelector("#runState");
 const predictedPrice = document.querySelector("#predictedPrice");
 const validationList = document.querySelector("#validationList");
-const activeFeatures = document.querySelector("#activeFeatures");
-const rawJson = document.querySelector("#rawJson");
-const encodedJson = document.querySelector("#encodedJson");
 const healthStatus = document.querySelector("#healthStatus");
-const healthDetail = document.querySelector("#healthDetail");
 const inputPanel = document.querySelector(".input-panel");
+let activeApiBase = null;
+
+function setHealth(status) {
+  if (healthStatus) healthStatus.textContent = status;
+}
+
+function apiBaseCandidates() {
+  const candidates = [];
+  const isHttpPage = window.location.protocol === "http:" || window.location.protocol === "https:";
+
+  if (isHttpPage) candidates.push("");
+  candidates.push("http://127.0.0.1:8000");
+  candidates.push("http://localhost:8000");
+
+  if (
+    isHttpPage &&
+    window.location.hostname &&
+    !["127.0.0.1", "localhost"].includes(window.location.hostname)
+  ) {
+    candidates.push(`http://${window.location.hostname}:8000`);
+  }
+
+  return [...new Set(candidates)];
+}
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
+async function apiRequest(path, options = {}) {
+  const bases = activeApiBase === null ? apiBaseCandidates() : [activeApiBase, ...apiBaseCandidates()];
+  const errors = [];
+
+  for (const base of [...new Set(bases)]) {
+    try {
+      const response = await fetchWithTimeout(`${base}${path}`, options);
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`${response.status} ${response.statusText}${body ? `: ${body}` : ""}`);
+      }
+      activeApiBase = base;
+      return response;
+    } catch (error) {
+      errors.push(`${base || "same-origin"} -> ${error.message}`);
+    }
+  }
+
+  throw new Error(errors.join(" | "));
+}
 
 function getMode() {
   return document.querySelector('input[name="mode"]:checked')?.value || "text";
@@ -58,6 +109,7 @@ function syncModeVisibility() {
 function nullableValue(id) {
   const element = document.querySelector(`#${id}`);
   const value = element.value.trim();
+  if (id === "condition" && !value) return "unknown";
   if (!value) return null;
   if (["ram_gb", "storage_gb", "screen_size_inch"].includes(id)) return Number(value);
   if (id === "cpu_generation") return Number.parseInt(value, 10);
@@ -66,10 +118,6 @@ function nullableValue(id) {
 
 function collectRawFeatures() {
   return Object.fromEntries(fields.map((field) => [field, nullableValue(field)]));
-}
-
-function setJson(element, value) {
-  element.textContent = JSON.stringify(value, null, 2);
 }
 
 function setValidation(items) {
@@ -81,22 +129,10 @@ function setValidation(items) {
   });
 }
 
-function setChips(items) {
-  activeFeatures.innerHTML = "";
-  if (!items.length) {
-    activeFeatures.innerHTML = "<span>Không có feature nổi bật</span>";
-    return;
-  }
-  items.forEach((item) => {
-    const chip = document.createElement("span");
-    chip.textContent = item;
-    activeFeatures.appendChild(chip);
-  });
-}
-
 function formatPrice(value) {
   if (typeof value !== "number" || Number.isNaN(value)) return "--";
-  return value.toLocaleString("vi-VN", { maximumFractionDigits: 3 });
+  const valueInVnd = Math.round(value * 1_000_000);
+  return `${valueInVnd.toLocaleString("vi-VN")}<sup>đ</sup>`;
 }
 
 function setLoading(isLoading) {
@@ -110,20 +146,34 @@ function fillExample() {
     const element = document.querySelector(`#${field}`);
     element.value = example.raw_features[field] ?? "";
   });
-  setJson(rawJson, example.raw_features);
+}
+
+function userFriendlyStatus(data, mode) {
+  const items = [];
+  items.push(mode === "manual" ? "Đã nhận thông tin từ form." : "Đã đọc mô tả và rút thông tin cấu hình.");
+  items.push("Đã kiểm tra các giá trị nhập vào.");
+  items.push("Đã chuẩn hóa cấu hình cho model dự đoán.");
+
+  const missing = Object.entries(data.raw_features || {})
+    .filter(([, value]) => value === null || value === "")
+    .map(([key]) => key);
+
+  if (missing.length) {
+    items.push(`Một số thông tin còn thiếu, kết quả có thể kém chính xác hơn: ${missing.slice(0, 4).join(", ")}${missing.length > 4 ? "..." : ""}.`);
+  } else {
+    items.push("Thông tin chính đã đủ để tham khảo giá.");
+  }
+
+  return items;
 }
 
 async function checkHealth() {
   try {
-    const response = await fetch("/api/health");
+    const response = await apiRequest("/api/health");
     const data = await response.json();
-    healthStatus.textContent = data.ok ? "Sẵn sàng" : "Có lỗi";
-    healthDetail.textContent = data.model_available
-      ? "Model full-data đã sẵn sàng. Mode LLM dùng GEMINI_API_KEY."
-      : "Không tìm thấy model full-data trong thư mục models.";
+    setHealth(data.ok && data.model_available ? "Sẵn sàng" : "Có lỗi");
   } catch (error) {
-    healthStatus.textContent = "Không kết nối";
-    healthDetail.textContent = "Hãy chạy backend server trước.";
+    setHealth("Không kết nối");
   }
 }
 
@@ -141,20 +191,16 @@ form.addEventListener("submit", async (event) => {
       : { mode, description: document.querySelector("#description").value.trim() };
 
   try {
-    const response = await fetch("/api/predict", {
+    const response = await apiRequest("/api/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Prediction failed.");
 
     runState.textContent = "Hoàn tất";
-    predictedPrice.textContent = formatPrice(data.predicted_price);
-    setValidation(data.validation || []);
-    setChips(data.active_features || []);
-    setJson(rawJson, data.raw_features || {});
-    setJson(encodedJson, data.encoded_features || {});
+    predictedPrice.innerHTML = formatPrice(data.predicted_price);
+    setValidation(userFriendlyStatus(data, mode));
 
     fields.forEach((field) => {
       const element = document.querySelector(`#${field}`);
@@ -185,20 +231,6 @@ document.querySelector("#clearForm").addEventListener("click", () => {
   predictedPrice.textContent = "--";
   runState.textContent = "Chưa chạy";
   setValidation(["Chờ dữ liệu đầu vào."]);
-  setChips([]);
-  setJson(rawJson, {});
-  setJson(encodedJson, {});
-});
-
-document.querySelectorAll("[data-copy]").forEach((button) => {
-  button.addEventListener("click", async () => {
-    const id = button.getAttribute("data-copy");
-    await navigator.clipboard.writeText(document.querySelector(`#${id}`).textContent);
-    button.textContent = "Copied";
-    setTimeout(() => {
-      button.textContent = "Copy";
-    }, 900);
-  });
 });
 
 document.querySelectorAll(".accordion-item").forEach((item) => {
@@ -213,8 +245,8 @@ syncModeVisibility();
 checkHealth();
 
 if (window.gsap && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  gsap.from(".nav-shell", {
-    y: -28,
+  gsap.from(".hero-topline", {
+    y: -20,
     opacity: 0,
     duration: 0.55,
     ease: "power3.out",
@@ -228,7 +260,7 @@ if (window.gsap && !window.matchMedia("(prefers-reduced-motion: reduce)").matche
     ease: "power3.out",
   });
 
-  gsap.from(".hero-diagram, .input-panel, .result-panel", {
+  gsap.from(".input-panel, .result-panel", {
     y: 24,
     opacity: 0,
     duration: 0.55,
@@ -238,7 +270,7 @@ if (window.gsap && !window.matchMedia("(prefers-reduced-motion: reduce)").matche
 
   if (window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
-    gsap.utils.toArray(".process-card, .json-card, .accordion-item").forEach((element) => {
+    gsap.utils.toArray(".process-card, .accordion-item").forEach((element) => {
       gsap.from(element, {
         y: 28,
         opacity: 0,

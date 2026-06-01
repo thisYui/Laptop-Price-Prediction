@@ -92,6 +92,8 @@ class LaptopPriceHandler(BaseHTTPRequestHandler):
         content_type, _ = mimetypes.guess_type(str(target))
         self.send_response(200)
         self.send_header("Content-Type", content_type or "application/octet-stream")
+        if target.suffix.lower() in {".html", ".js", ".css"}:
+            self.send_header("Cache-Control", "no-store")
         self.send_header("Content-Length", str(len(content)))
         self.end_headers()
         self.wfile.write(content)
