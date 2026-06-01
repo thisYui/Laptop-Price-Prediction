@@ -8,10 +8,9 @@ from typing import Any
 
 import requests
 
-try:
-    from dotenv import load_dotenv
-except ImportError:  # pragma: no cover
-    load_dotenv = None
+
+from dotenv import load_dotenv
+
 
 from src.encoder import LaptopFeatureEncoder
 from src.encoder.encoder_validation import validate_input_rows
@@ -135,7 +134,7 @@ Warranty parsing:
 
 def load_environment() -> None:
     if load_dotenv is not None:
-        load_dotenv(PROJECT_ROOT / ".env")
+        load_dotenv(PROJECT_ROOT / "app/backend/.env")
 
 
 def raw_laptop_json_schema() -> dict[str, Any]:
